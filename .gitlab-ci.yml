@@ -11,8 +11,14 @@ before_script:
   - cd $GOPATH/src/$REPO_NAME
 
 stages:
+    - get
     - test
     - build
+
+get:
+    stage: build
+    script:
+      - go get $CI_PROJECT_DIR
 
 format:
     stage: test
