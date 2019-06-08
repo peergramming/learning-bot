@@ -1,4 +1,4 @@
-package models
+package gitlab
 
 type GitlabRepoCommits struct {
 	ID         string `json:"id"`

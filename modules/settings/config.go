@@ -3,10 +3,11 @@ package settings
 import (
 	"github.com/BurntSushi/toml"
 	"log"
+	"os"
 )
 
 var (
-	ConfigPath = "./config.toml"
+	ConfigPath string
 	Config     Configuration
 )
 
@@ -33,10 +34,14 @@ type DBConfiguration struct {
 	Path    string // For SQLite
 }
 
-func LoadConfig() {
-	if _, err := toml.DecodeFile(ConfigPath, &Config); err != nil {
-		log.Println("Failed to load the configuration file!")
-		log.Fatal(err)
+func init() {
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Fatal("Cannot get working directory! ", err)
 	}
 
+	ConfigPath = wd + "/config.toml"
+	if _, err2 := toml.DecodeFile(ConfigPath, &Config); err2 != nil {
+		log.Fatal("Failed to load the configuration file! ", err2)
+	}
 }

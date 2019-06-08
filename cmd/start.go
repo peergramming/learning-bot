@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/urfave/cli"
-	"gitlab.com/gitedulab/learning-bot/modules/settings"
 	macaron "gopkg.in/macaron.v1"
 )
 
@@ -14,9 +13,6 @@ var CmdStart = cli.Command{
 }
 
 func start(clx *cli.Context) error {
-	// Load configuration
-	settings.LoadConfig()
-
 	// XORM initialisation
 
 	// Run macaron
