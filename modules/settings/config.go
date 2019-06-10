@@ -45,5 +45,4 @@ func init() {
 	if _, err2 := toml.DecodeFile(ConfigPath, &Config); err2 != nil {
 		log.Fatal("Failed to load the configuration file! Make sure you generate a configuration first!\n", err2)
 	}
-
 }

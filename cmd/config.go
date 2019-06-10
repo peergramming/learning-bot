@@ -58,61 +58,42 @@ func runConfig(clx *cli.Context) error {
 	fmt.Println("This program requires checkstyle to generate reports")
 	fmt.Println("Checkstyle can be downloaded from https://github.com/checkstyle/checkstyle/releases")
 	fmt.Printf("Enter the path of the checkstyle jar file: [%s] ", defaultCheckstylePath)
-	var checkstylePath string
-	fmt.Scanln(&checkstylePath)
-	if checkstylePath == "" {
-		checkstylePath = defaultCheckstylePath
-	}
+	checkstylePath := scanWithDefault(defaultCheckstylePath)
+
+	var dbConfig settings.DBConfiguration
 
 	fmt.Println("This program supports the following database drivers:")
 	fmt.Println("mysql, sqlite")
 	fmt.Printf("Select a database driver: [%s] ", defaultDriver)
-	var dbDriver string
-	fmt.Scanln(&dbDriver)
-	if dbDriver == "" {
-		dbDriver = defaultDriver
-	}
+	dbDriver := scanWithDefault(defaultDriver)
 
 	var dbDriverType settings.DBType
 	switch strings.ToLower(dbDriver) {
 	case "sqlite":
-		dbDriverType = settings.SQLite
+		dbConfig.Type = settings.SQLite
 	case "mysql":
-		dbDriverType = settings.MySQL
+		dbConfig.Type = settings.MySQL
 	default:
-		dbDriverType = settings.SQLite
+		dbConfig.Type = settings.SQLite
 	}
 
-	var dbConfig settings.DBConfiguration
-	dbConfig.Type = dbDriverType
-
 	if dbDriverType == settings.SQLite {
-		var dbPath string
 		fmt.Printf("Enter a path for the SQLite file: [%s] ", defaultDBPath)
-		fmt.Scanln(&dbPath)
-		if dbPath == "" {
-			dbPath = defaultDBPath
-		}
-		dbConfig.Path = dbPath
+		dbConfig.Path = scanWithDefault(defaultDBPath)
 	} else if dbDriverType == settings.MySQL {
-		var dbHost, dbName, dbUser, dbSSLMode string
 		fmt.Printf("Enter the host of the MySQL server (incl. port): [%s] ", defaultDBHost)
-		inputWithDefault(&dbHost, defaultDBHost)
-		dbConfig.Host = dbHost
+		dbConfig.Host = scanWithDefault(defaultDBHost)
 
 		fmt.Printf("Enter the database name to use for the MySQL server: ")
-		fmt.Scanln(&dbName)
-		dbConfig.Name = dbName
+		dbConfig.Name = scanWithDefault("")
 
 		fmt.Printf("Enter the username to use for the MySQL server: ")
-		fmt.Scanln(&dbUser)
-		dbConfig.User = dbUser
+		dbConfig.User = scanWithDefault("")
 
 		fmt.Println("Select the TLS mode to use, the following values are valid:")
 		fmt.Println("true, false, skip-verify, preferred, <name>")
 		fmt.Printf("Enter the TLS mode to use for the MySQL server: [%s] ", defaultDBSSLMode)
-		inputWithDefault(&dbSSLMode, defaultDBSSLMode)
-		dbConfig.SSLMode = dbSSLMode
+		dbConfig.SSLMode = scanWithDefault(defaultDBSSLMode)
 	}
 
 	// Generate struct configuration
@@ -140,9 +121,11 @@ func runConfig(clx *cli.Context) error {
 	return nil
 }
 
-func inputWithDefault(input *string, defaultVal string) {
-	fmt.Scanln(input)
-	if *input == "" {
-		*input = defaultVal
+func scanWithDefault(defaultVal string) string {
+	var temp string
+	fmt.Scanln(&temp)
+	if temp == "" {
+		temp = defaultVal
 	}
+	return temp
 }

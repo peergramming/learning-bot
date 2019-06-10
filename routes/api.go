@@ -4,20 +4,9 @@ import (
 	macaron "gopkg.in/macaron.v1"
 )
 
-func APIGetProjectHandler(ctx *macaron.Context) {
+func APIGetReportStatusHandler(ctx *macaron.Context) {
+	// Allowed statuses: failed canceled running pending success success-with-warnings skipped not_found
 	ctx.JSON(200, &map[string]string{
-		"error": "to be implemented",
-	})
-}
-
-func APIGenReportHandler(ctx *macaron.Context) {
-	ctx.JSON(200, &map[string]string{
-		"error": "to be implemented",
-	})
-}
-
-func APIGetReportsHandler(ctx *macaron.Context) {
-	ctx.JSON(200, &map[string]string{
-		"error": "to be implemented",
+		"status": "skipped",
 	})
 }

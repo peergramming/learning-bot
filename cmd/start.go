@@ -15,8 +15,6 @@ var CmdStart = cli.Command{
 }
 
 func start(clx *cli.Context) error {
-	// XORM initialisation
-
 	// Run macaron
 	m := macaron.Classic()
 	m.Use(macaron.Renderer())
@@ -25,10 +23,9 @@ func start(clx *cli.Context) error {
 	m.Get("/", routes.HomepageHandler)
 
 	// API routes; closely resemble GitLab's API
-	m.Group("/api/v1", func() {
-		m.Get("/project/:id", routes.APIGetProjectHandler)
-		m.Get("/project/:id/generate_report", routes.APIGenReportHandler)
-		m.Get("/project/:id/reports", routes.APIGetReportsHandler)
+	m.Group("/:namespace/:project", func() {
+		m.Get("/report/:sha", routes.ReportPageHandler)
+		m.Get("/status/:sha.json", routes.APIGetReportStatusHandler)
 	})
 
 	m.Run()
