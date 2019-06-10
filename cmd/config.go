@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 )
 
 var CmdConfig = cli.Command{
@@ -20,6 +21,10 @@ var CmdConfig = cli.Command{
 var (
 	defaultInstance       = "https://gitlab.com"
 	defaultCheckstylePath = "checkstyle-8.21-all.jar"
+	defaultDriver         = "sqlite"
+	defaultDBPath         = "./data.db"
+	defaultDBHost         = "localhost:3306"
+	defaultDBSSLMode      = "skip-verify"
 )
 
 func runConfig(clx *cli.Context) error {
@@ -59,12 +64,68 @@ func runConfig(clx *cli.Context) error {
 		checkstylePath = defaultCheckstylePath
 	}
 
-	config := settings.Configuration{
-		BotPrivateToken:      token,
-		GitLabInstanceURL:    instance,
-		CheckstyleJarPath:    checkstylePath,
-		CheckstyleConfigPath: "./assets/checkstyle-lb.xml",
+	fmt.Println("This program supports the following database drivers:")
+	fmt.Println("mysql, sqlite")
+	fmt.Printf("Select a database driver: [%s] ", defaultDriver)
+	var dbDriver string
+	fmt.Scanln(&dbDriver)
+	if dbDriver == "" {
+		dbDriver = defaultDriver
 	}
+
+	var dbDriverType settings.DBType
+	switch strings.ToLower(dbDriver) {
+	case "sqlite":
+		dbDriverType = settings.SQLite
+	case "mysql":
+		dbDriverType = settings.MySQL
+	default:
+		dbDriverType = settings.SQLite
+	}
+
+	var dbConfig settings.DBConfiguration
+	dbConfig.Type = dbDriverType
+
+	if dbDriverType == settings.SQLite {
+		var dbPath string
+		fmt.Printf("Enter a path for the SQLite file: [%s] ", defaultDBPath)
+		fmt.Scanln(&dbPath)
+		if dbPath == "" {
+			dbPath = defaultDBPath
+		}
+		dbConfig.Path = dbPath
+	} else if dbDriverType == settings.MySQL {
+		var dbHost, dbName, dbUser, dbSSLMode string
+		fmt.Printf("Enter the host of the MySQL server (incl. port): [%s] ", defaultDBHost)
+		inputWithDefault(&dbHost, defaultDBHost)
+		dbConfig.Host = dbHost
+
+		fmt.Printf("Enter the database name to use for the MySQL server: ")
+		fmt.Scanln(&dbName)
+		dbConfig.Name = dbName
+
+		fmt.Printf("Enter the username to use for the MySQL server: ")
+		fmt.Scanln(&dbUser)
+		dbConfig.User = dbUser
+
+		fmt.Println("Select the TLS mode to use, the following values are valid:")
+		fmt.Println("true, false, skip-verify, preferred, <name>")
+		fmt.Printf("Enter the TLS mode to use for the MySQL server: [%s] ", defaultDBSSLMode)
+		inputWithDefault(&dbSSLMode, defaultDBSSLMode)
+		dbConfig.SSLMode = dbSSLMode
+	}
+
+	// Generate struct configuration
+
+	config := settings.Configuration{
+		BotPrivateToken:       token,
+		GitLabInstanceURL:     instance,
+		CheckstyleJarPath:     checkstylePath,
+		CheckstyleConfigPath:  "./assets/checkstyle-lb.xml",
+		DatabaseConfiguration: dbConfig,
+	}
+
+	// Write to file
 
 	buf := new(bytes.Buffer)
 	if err := toml.NewEncoder(buf).Encode(config); err != nil {
@@ -77,4 +138,11 @@ func runConfig(clx *cli.Context) error {
 	}
 
 	return nil
+}
+
+func inputWithDefault(input *string, defaultVal string) {
+	fmt.Scanln(input)
+	if *input == "" {
+		*input = defaultVal
+	}
 }

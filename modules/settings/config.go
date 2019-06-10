@@ -12,10 +12,11 @@ var (
 )
 
 type Configuration struct {
-	BotPrivateToken      string
-	CheckstyleJarPath    string
-	CheckstyleConfigPath string
-	GitLabInstanceURL    string
+	BotPrivateToken       string
+	CheckstyleJarPath     string
+	CheckstyleConfigPath  string
+	GitLabInstanceURL     string
+	DatabaseConfiguration DBConfiguration
 }
 
 type DBType int
@@ -42,6 +43,7 @@ func init() {
 
 	ConfigPath = wd + "/config.toml"
 	if _, err2 := toml.DecodeFile(ConfigPath, &Config); err2 != nil {
-		log.Fatal("Failed to load the configuration file! ", err2)
+		log.Fatal("Failed to load the configuration file! Make sure you generate a configuration first!\n", err2)
 	}
+
 }

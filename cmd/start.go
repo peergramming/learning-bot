@@ -26,9 +26,9 @@ func start(clx *cli.Context) error {
 
 	// API routes; closely resemble GitLab's API
 	m.Group("/api/v1", func() {
-		//m.Get("/project/:id", routes.APIGetProjectHandler)
-		//m.Get("/project/:id/generate_report", routes.APIGenReportHandler)
-		//m.Get("/project/:id/reports", routes.APIGetReportsHandler)
+		m.Get("/project/:id", routes.APIGetProjectHandler)
+		m.Get("/project/:id/generate_report", routes.APIGenReportHandler)
+		m.Get("/project/:id/reports", routes.APIGetReportsHandler)
 	})
 
 	m.Run()
