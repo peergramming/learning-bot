@@ -5,6 +5,9 @@ import (
 	"github.com/go-xorm/xorm"
 	_ "github.com/mattn/go-sqlite3"
 	"gitlab.com/gitedulab/learning-bot/modules/settings"
+	"fmt"
+	"os"
+	"log"
 )
 
 var engine *xorm.Engine
@@ -21,6 +24,10 @@ func init() {
 			dbConf.User, os.Getenv("MYSQL_PASSWORD"),
 			dbConf.Host, dbConf.Name, dbConf.SSLMode)
 		engine, err = xorm.NewEngine("mysql", dbAddr)
+	}
+
+	if err != nil {
+		log.Fatal("Unable to load database! ", err)
 	}
 
 }
