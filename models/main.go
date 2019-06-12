@@ -1,16 +1,19 @@
 package models
 
 import (
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
 	_ "github.com/mattn/go-sqlite3"
 	"gitlab.com/gitedulab/learning-bot/modules/settings"
-	"fmt"
-	"os"
 	"log"
+	"os"
 )
 
-var engine *xorm.Engine
+var (
+	engine *xorm.Engine
+	tables []interface{}
+)
 
 func init() {
 	var err error
@@ -29,5 +32,10 @@ func init() {
 	if err != nil {
 		log.Fatal("Unable to load database! ", err)
 	}
+
+	tables = append(tables,
+		new(Repository),
+		new(Report),
+	)
 
 }
