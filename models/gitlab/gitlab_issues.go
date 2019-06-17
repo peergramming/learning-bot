@@ -34,12 +34,17 @@ type GitLabAuthor struct {
 }
 
 func GetRepoIssues(project string) []GitLabIssue {
+	var err error
 	url := fmt.Sprintf("/projects/%s/issues", url.PathEscape(project))
 	req := GetNewGitLabRequest(url)
-	body := DoRequestBytes(req)
+	var body []byte
+	body, err = DoRequestBytes(req)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	var issues []GitLabIssue
-	err := json.Unmarshal(body, &issues)
+	err = json.Unmarshal(body, &issues)
 	if err != nil {
 		log.Fatal(err)
 	}

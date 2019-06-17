@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"errors"
 )
 
 var client = &http.Client{}
@@ -21,7 +22,7 @@ func GetNewGitLabRequest(url string) *http.Request {
 	return req
 }
 
-func DoRequestBytes(req *http.Request) []byte {
+func DoRequestBytes(req *http.Request) ([]byte, error) {
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
@@ -32,5 +33,10 @@ func DoRequestBytes(req *http.Request) []byte {
 		log.Fatal(err2)
 	}
 
-	return body
+	// https://docs.gitlab.com/ee/api/#status-codes
+	if resp.StatusCode != 200 {
+		return nil, errors.New("Non-200 response")
+	}
+
+	return body, nil
 }
