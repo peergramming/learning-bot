@@ -1,0 +1,17 @@
+{{template "base/head" .}}
+<div class="content">
+<h2>Report</h2>
+{{if .IsOldReport}}<div class="warning-banner banner">
+<p><b>Notice:</b> This is a report based on an old version of your code!
+</div>{{end}}
+<div class="meta">
+<p>Project: <a href="{{.GitLabInst}}/{{.Project}}">{{.Project}}</a></p>
+<p>Commit: <a href="{{.GitLabInst}}/{{.Project}}/commit/{{.Commit}}">{{.CommitShort}}</a></p>
+<p>Report generated: {{.ReportGenDate}}</p>
+</div>
+
+
+
+
+</div>
+{{template "base/footer" .}}

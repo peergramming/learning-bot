@@ -6,18 +6,18 @@
         <link rel="stylesheet" href="/css/normalize-8.0.1.min.css" />
         <link rel="stylesheet" href="/css/main.css" />
         <title>{{if .Title}}{{ .Title }} - {{end}}Learning Bot</title>
-        {{if .Description }}<meta name="description" content="{{.Description}}" />{{end}}
         <link rel="icon" href="data:;base64," />
     </head>
     <body>
         <div class="container">
             <nav class="nav-grey">
-                <ul>
-				<li class="nav-right"><a href="/">GitLab</a></li>
+              <ul>
+				<li class="nav-right"><a href="{{.LMSUrl}}">{{.LMSTitle}}</a></li>
+				<li class="nav-right"><a href="{{.GitLabInst}}">GitLab</a></li>
               </ul>
             </nav>
             <nav>
-                <ul>
+              <ul>
 				<li><a href="/">Learning Bot</a></li>
               </ul>
             </nav>
