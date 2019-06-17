@@ -74,6 +74,19 @@ edited, if required). And the web server (and bot) can start.
 $ ./learning-bot run
 ```
 
+## Installing the Project Service (GitLab)
+
+The project service can be installed by coping the file `learning_bot_service.rb` in
+the `project_services_gitlab` folder of this project to the GitLab-CE source at
+`app/models/project_services/[learning_bot_service.rb]`.  
+
+After copying the file, you will have to change the `learning_bot_service_url` constant
+to be the bot's instance URL (including port, if non-default).  
+
+Then make sure to include the service models in `app/models/project.rb` and
+`spec/models/project_spec.rb` to make sure that GitLab recognises and loads
+the new service.
+
 ## Development board
 
 Development can be tracked at our [Trello board](https://trello.com/b/tTjkyF73/learning-bot).
