@@ -10,6 +10,24 @@
 <p>Report generated: {{.ReportGenDate}}</p>
 </div>
 
+<div class="issue-card">
+<div class="file">
+<p class="file-title"><a target="_blank" href="{{.GitLabInst}}/{{.Project}}/blob/{{.Commit}}/file#L33">src/F28DA_CW1/FileWordRead.java:33:31</a></p>
+</div>
+<div class="code-snippet">
+<code class="java">        ch = in.read();</code>
+<code class="java">        if (ch == -1) {</code>
+<code class="java">            endOfFile = true;</code>
+<code class="java highlight-line">            return (null);</code>
+<code>                   ^</code>
+</div>
+<div class="suggestion">
+<p>Unnecessary paranthesis around literal 'null'.</p>
+
+<p><a target="issue" href="/help/unnecessaryparanthesis">Learn more about this type of issue and how to fix it</a></p>
+</div>
+
+</div>
 
 
 
