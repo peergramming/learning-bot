@@ -28,7 +28,6 @@
 		<!-- Humaid added modules -->
 		<module name="ArrayTrailingComma"/>
 		<module name="EmptyStatement"/>
-		<module name="EqualsAvoidNull"/>
 		<module name="EqualsHashCode"/>
 		<module name="IllegalCatch"/>
 		<module name="IllegalCatch">
