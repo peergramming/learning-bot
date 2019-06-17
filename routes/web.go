@@ -1,8 +1,8 @@
 package routes
 
 import (
-	macaron "gopkg.in/macaron.v1"
 	"fmt"
+	macaron "gopkg.in/macaron.v1"
 )
 
 // HomepageHandler handles the index page, which contains a description of the program.

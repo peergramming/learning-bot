@@ -1,8 +1,8 @@
 package routes
 
 import (
-	macaron "gopkg.in/macaron.v1"
 	"gitlab.com/gitedulab/learning-bot/modules/settings"
+	macaron "gopkg.in/macaron.v1"
 )
 
 // ctxInit adds global context data to the page.

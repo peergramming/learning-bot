@@ -1,12 +1,12 @@
 package gitlab
 
 import (
+	"errors"
 	"fmt"
 	"gitlab.com/gitedulab/learning-bot/modules/settings"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"errors"
 )
 
 var client = &http.Client{}

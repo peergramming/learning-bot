@@ -12,7 +12,7 @@ var (
 )
 
 type Configuration struct {
-	SiteTitle string
+	SiteTitle             string
 	BotPrivateToken       string
 	CheckstyleJarPath     string
 	CheckstyleConfigPath  string
