@@ -37,23 +37,7 @@
 					java.lang.RuntimeException,
 					java.lang.NullPointerException"/>
 		</module>
-		<module name="IllegalInstantiation">
-			<property name="classes"
-				value="org.xml.sax.SAXException, org.xml.sax.SAXParseException,
-				org.apache.commons.beanutils.ConversionException,
-				org.antlr.v4.runtime.misc.ParseCancellationException,
-				antlr.RecognitionException, antlr.TokenStreamException,
-				antlr.TokenStreamRecognitionException, antlr.ANTLRException,
-				java.lang.StringBuffer"/>
-		</module>
 		<module name="IllegalThrows"/>
-		<module name="IllegalType">
-			<property name="illegalClassNames"
-				value="java.util.HashSet, HashSet, java.util.LinkedHashMap, LinkedHashMap,
-				java.util.TreeMap, TreeMap, java.util.HashMap, HashMap,
-				java.util.LinkedHashSet, LinkedHashSet, java.util.TreeSet, TreeSet,
-				java.lang.StringBuffer, StringBuffer"/>
-		</module>
 		<module name="InnerAssignment"/>
 		<module name="MagicNumber"/>
 		<module name="ModifiedControlVariable"/>
