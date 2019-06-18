@@ -2,7 +2,8 @@ package routes
 
 import (
 	"fmt"
-	checkstyle "gitlab.com/gitedulab/learning-bot/models/checkstyle"
+	"gitlab.com/gitedulab/learning-bot/models/checkstyle"
+	"gitlab.com/gitedulab/learning-bot/modules/utils"
 	macaron "gopkg.in/macaron.v1"
 )
 
@@ -23,7 +24,7 @@ func HelpCheckHandler(ctx *macaron.Context) {
 		return
 	}
 
-	ctx.Data["Check"] = check
+	ctx.Data["Check"] = utils.Spacify(check)
 	ctx.Data["Description"] = desc.Description
 	ctx.Data["Rationale"] = desc.Rationale
 	ctx.Data["Suggestion"] = desc.Suggestion

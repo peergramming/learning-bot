@@ -1,4 +1,4 @@
-package models
+package checkstyle
 
 var Checks = map[string]CheckDesc{
 	"ArrayTrailingComma": CheckDesc{Category: "coding",
