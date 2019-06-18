@@ -21,8 +21,9 @@ func start(clx *cli.Context) error {
 
 	// Web routes
 	m.Get("/", routes.HomepageHandler)
+	m.Get("/help/:check", routes.HelpCheckHandler)
 
-	// API routes; closely resemble GitLab's API
+	// Project specific routes
 	m.Group("/:namespace/:project", func() {
 		m.Get("/report/:sha", routes.ReportPageHandler)
 		m.Get("/status/:sha.json", routes.APIGetReportStatusHandler)
