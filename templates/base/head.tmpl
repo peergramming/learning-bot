@@ -5,19 +5,19 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="/css/normalize-8.0.1.min.css" />
         <link rel="stylesheet" href="/css/main.css" />
-        <title>{{if .Title}}{{ .Title }} - {{end}}Learning Bot</title>
+        <title>{{if .Title}}{{ .Title }} - {{end}}{{.SiteTitle}}</title>
         <link rel="icon" href="data:;base64," />
     </head>
     <body>
         <div class="container">
             <nav class="nav-grey">
               <ul>
-				<li class="nav-right"><a href="{{.LMSUrl}}">{{.LMSTitle}}</a></li>
-				<li class="nav-right"><a href="{{.GitLabInst}}">GitLab</a></li>
+				<li class="nav-right"><a target="_blank" href="{{.GitLabInst}}">GitLab</a></li>
+				<li class="nav-right"><a target="_blank" href="{{.LMSUrl}}">{{.LMSTitle}}</a></li>
               </ul>
             </nav>
             <nav>
               <ul>
-				<li><a href="/">Learning Bot</a></li>
+				<li><a href="/">{{.SiteTitle}}</a></li>
               </ul>
             </nav>

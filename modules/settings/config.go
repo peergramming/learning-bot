@@ -18,6 +18,8 @@ type Configuration struct {
 	CheckstyleConfigPath  string
 	GitLabInstanceURL     string
 	DatabaseConfiguration DBConfiguration
+	LMSTitle              string
+	LMSURL                string
 }
 
 type DBType int
