@@ -25,7 +25,7 @@ add a badge to each commit, which would redirect to the report page.
 The following packages must be installed on your system.
 
 - git
-- go (tested with 1.12)
+- go 1.12
 
 The program supports MySQL, but it is optional requirement as an SQLite
 option is available.
