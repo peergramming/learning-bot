@@ -2,8 +2,10 @@ package routes
 
 import (
 	"fmt"
+	"log"
 	"gitlab.com/gitedulab/learning-bot/models/checkstyle"
 	"gitlab.com/gitedulab/learning-bot/modules/utils"
+	"gitlab.com/gitedulab/learning-bot/models"
 	macaron "gopkg.in/macaron.v1"
 )
 
@@ -20,7 +22,7 @@ func HelpCheckHandler(ctx *macaron.Context) {
 	check := ctx.Params("check")
 	desc, ok := checkstyle.Checks[check]
 	if !ok {
-		ctx.Error(400, "Page does not exist")
+		ctx.Error(404, "Page does not exist")
 		return
 	}
 
@@ -36,12 +38,27 @@ func HelpCheckHandler(ctx *macaron.Context) {
 // ReportPageHandler handles rendering a report page.
 func ReportPageHandler(ctx *macaron.Context) {
 	ctxInit(ctx)
-	ctx.Data["Project"] = fmt.Sprintf("%s/%s", ctx.Params("namespace"),
-		ctx.Params("project"))
 
+	project := fmt.Sprintf("%s/%s", ctx.Params("namespace"),
+		ctx.Params("project"))
 	commit := ctx.Params("sha")
+
+	report, err := models.GetReport(project, commit)
+
+	if err.Error() == "Report does not exist" {
+		// Report does not exist, generate one
+	} else if err != nil {
+		// Some unknown error
+		ctx.Error(500, "Server error")
+		log.Printf("Failed to get report %s: %s", project, err)
+		return
+	}
+
+	ctx.Data["Project"] = project
 	ctx.Data["Commit"] = commit
 	ctx.Data["CommitShort"] = commit[:8]
+
+	fmt.Printf("Report has %s issues", len(report.Issues))
 
 	ctx.HTML(200, "report")
 }
