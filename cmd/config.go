@@ -110,16 +110,20 @@ func runConfig(clx *cli.Context) error {
 	}
 
 	// Write to file
+	var err error
 
 	buf := new(bytes.Buffer)
-	if err := toml.NewEncoder(buf).Encode(config); err != nil {
+	if err = toml.NewEncoder(buf).Encode(config); err != nil {
 		log.Fatal(err)
 	}
 
-	err2 := ioutil.WriteFile("config.toml", buf.Bytes(), 0644)
-	if err2 != nil {
-		log.Fatal(err2)
+	err = ioutil.WriteFile(settings.ConfigPath, buf.Bytes(), 0644)
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	fmt.Printf("Configuration saved at %s/%s!\n", settings.WorkingDir, settings.ConfigPath)
+	fmt.Println("Review the configuration file to confirm the configuration is correct.")
 
 	return nil
 }

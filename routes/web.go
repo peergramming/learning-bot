@@ -46,7 +46,8 @@ func ReportPageHandler(ctx *macaron.Context) {
 	report, err := models.GetReport(project, commit)
 
 	if err.Error() == "Report does not exist" {
-		// Report does not exist, generate one
+		ctx.Error(404, err.Error())
+		return
 	} else if err != nil {
 		// Some unknown error
 		ctx.Error(500, "Server error")
