@@ -5,8 +5,8 @@ import (
 )
 
 type Repository struct {
-	ProjectID          string `xorm:"varchar(64) pk"`
-	IssueID            int    `xorm:"null"` // stored id of the main issue for checkstyle report
+	ProjectID string `xorm:"varchar(64) pk"`
+	IssueID   int    `xorm:"null"` // stored id of the main issue for checkstyle report
 }
 
 // GetRepo returns the repository from owner/repo

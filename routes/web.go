@@ -2,11 +2,11 @@ package routes
 
 import (
 	"fmt"
-	"log"
+	"gitlab.com/gitedulab/learning-bot/models"
 	"gitlab.com/gitedulab/learning-bot/models/checkstyle"
 	"gitlab.com/gitedulab/learning-bot/modules/utils"
-	"gitlab.com/gitedulab/learning-bot/models"
 	macaron "gopkg.in/macaron.v1"
+	"log"
 )
 
 // HomepageHandler handles the index page, which contains a description of the program.
@@ -58,7 +58,7 @@ func ReportPageHandler(ctx *macaron.Context) {
 	ctx.Data["Commit"] = commit
 	ctx.Data["CommitShort"] = commit[:8]
 
-	fmt.Printf("Report has %s issues", len(report.Issues))
+	fmt.Printf("Report has %d issues", len(report.Issues))
 
 	ctx.HTML(200, "report")
 }

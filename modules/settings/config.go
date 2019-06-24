@@ -1,10 +1,10 @@
 package settings
 
 import (
+	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/xanzy/go-gitlab"
 	"log"
-	"fmt"
 	"os"
 )
 

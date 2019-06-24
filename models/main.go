@@ -38,4 +38,5 @@ func init() {
 		new(Report),
 	)
 
+	engine.Sync(tables...)
 }

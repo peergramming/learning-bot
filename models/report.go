@@ -5,9 +5,9 @@ import (
 )
 
 type Report struct {
-	ProjectID  string `xorm:"varchar(64) pk"`
-	Commit     string `xorm:"varchar(40) notnull"`
-	Issues     []Issue
+	ProjectID string `xorm:"varchar(64) pk"`
+	Commit    string `xorm:"varchar(40) notnull"`
+	Issues    []Issue
 }
 
 type Issue struct {
