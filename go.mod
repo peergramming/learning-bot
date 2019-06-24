@@ -9,6 +9,7 @@ require (
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/go-xorm/xorm v0.7.3
 	github.com/mattn/go-sqlite3 v1.10.0
+	github.com/robfig/cron v1.2.0
 	github.com/smartystreets/goconvey v0.0.0-20190330032615-68dc04aab96a // indirect
 	github.com/urfave/cli v1.20.0
 	github.com/xanzy/go-gitlab v0.18.0

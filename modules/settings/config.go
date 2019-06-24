@@ -1,11 +1,7 @@
 package settings
 
 import (
-	"bytes"
-	"fmt"
 	"github.com/BurntSushi/toml"
-	"github.com/xanzy/go-gitlab"
-	"io/ioutil"
 	"log"
 	"os"
 )
@@ -19,14 +15,15 @@ var (
 )
 
 type Configuration struct {
-	SiteTitle             string
-	BotPrivateToken       string
-	CheckstyleJarPath     string
-	CheckstyleConfigPath  string
-	GitLabInstanceURL     string
-	DatabaseConfiguration DBConfiguration
-	LMSTitle              string
-	LMSURL                string
+	SiteTitle             string          `toml:"site_title"`
+	BotPrivateToken       string          `toml:"bot_private_access_token"`
+	CheckstyleJarPath     string          `toml:"checkstyle_jar_path"`
+	CheckstyleConfigPath  string          `toml:"checkstyle_config_path"`
+	GitLabInstanceURL     string          `toml:"gitlab_instance_url"`
+	DatabaseConfiguration DBConfiguration `toml:"database_configuration"`
+	LMSTitle              string          `toml:"lms_title,omitempty"`
+	LMSURL                string          `toml:"lms_url,omitempty"`
+	CheckActiveRepoCron   string          `toml:"check_active_repositories_cron"`
 }
 
 type DBType int
@@ -37,40 +34,27 @@ const (
 )
 
 type DBConfiguration struct {
-	Type    DBType
-	Host    string
-	Name    string
-	User    string
-	SSLMode string
-	Path    string // For SQLite
+	Type    DBType `toml:"type,string"`
+	Host    string `toml:"host,omitempty"` // For MySQL...
+	Name    string `toml:"name,omitempty"`
+	User    string `toml:"user,omitempty"`
+	SSLMode string `toml:"ssl_mode,omitempty"`
+	Path    string `toml:"path,omitempty"` // For SQLite
 }
 
-var gitlabClient *gitlab.Client
-
-type ActiveProjects struct {
-	Projects []Project
-}
-
-type Project struct {
-	Namespace string
-	Project   string
-}
-
-func GetGitLabClient() *gitlab.Client {
-	if gitlabClient == nil {
-		gitlabClient = gitlab.NewClient(nil, Config.BotPrivateToken)
-		gitlabClient.SetBaseURL(fmt.Sprintf("%s/api/v4", Config.GitLabInstanceURL))
+func NewConfiguration(token string, instance string, checkstyleJar string,
+	databaseConfig DBConfiguration) Configuration {
+	return Configuration{
+		SiteTitle:             "Learning Bot",
+		BotPrivateToken:       token,
+		GitLabInstanceURL:     instance,
+		CheckstyleJarPath:     checkstyleJar,
+		CheckstyleConfigPath:  "./assets/checkstyle-lb.xml",
+		DatabaseConfiguration: databaseConfig,
+		LMSTitle:              "Vision",
+		LMSURL:                "https://vision.hw.ac.uk",
+		CheckActiveRepoCron:   "@every 1h45m",
 	}
-	return gitlabClient
-}
-
-func IsActiveProject(namespace string, project string) (bool, int) {
-	for id, proj := range ActiveProjs.Projects {
-		if proj.Namespace == namespace && proj.Project == project {
-			return true, id
-		}
-	}
-	return false, 0
 }
 
 func init() {
@@ -88,26 +72,4 @@ func LoadConfig() {
 	}
 
 	LoadActiveProjs(false)
-}
-
-func LoadActiveProjs(quiet bool) {
-	var err error
-	if _, err = toml.DecodeFile(WorkingDir+"/"+ActiveProjsPath, &ActiveProjs); err != nil && !quiet {
-		log.Printf("Cannot load active projects file! Error: %s", err)
-		log.Printf("It is safe to ignore this error if you haven't created active projects file yet.")
-	}
-}
-
-func SaveActiveProjs() {
-	var err error
-
-	buf := new(bytes.Buffer)
-	if err = toml.NewEncoder(buf).Encode(ActiveProjs); err != nil {
-		log.Fatal(err)
-	}
-
-	err = ioutil.WriteFile(ActiveProjsPath, buf.Bytes(), 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
 }

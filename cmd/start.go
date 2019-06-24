@@ -17,6 +17,7 @@ var CmdStart = cli.Command{
 
 func start(clx *cli.Context) error {
 	settings.LoadConfig()
+	settings.SetupCron()
 
 	// Run macaron
 	m := macaron.Classic()

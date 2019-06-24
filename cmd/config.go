@@ -97,17 +97,7 @@ func runConfig(clx *cli.Context) error {
 	}
 
 	// Generate struct configuration
-
-	config := settings.Configuration{
-		SiteTitle:             "Learning Bot",
-		BotPrivateToken:       token,
-		GitLabInstanceURL:     instance,
-		CheckstyleJarPath:     checkstylePath,
-		CheckstyleConfigPath:  "./assets/checkstyle-lb.xml",
-		DatabaseConfiguration: dbConfig,
-		LMSTitle:              "Vision",
-		LMSURL:                "https://vision.hw.ac.uk",
-	}
+	config := settings.NewConfiguration(token, instance, checkstylePath, dbConfig)
 
 	// Write to file
 	var err error
