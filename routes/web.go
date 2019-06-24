@@ -2,11 +2,9 @@ package routes
 
 import (
 	"fmt"
-	"gitlab.com/gitedulab/learning-bot/models"
 	"gitlab.com/gitedulab/learning-bot/models/checkstyle"
 	"gitlab.com/gitedulab/learning-bot/modules/utils"
 	macaron "gopkg.in/macaron.v1"
-	"log"
 )
 
 // HomepageHandler handles the index page, which contains a description of the program.
@@ -43,7 +41,7 @@ func ReportPageHandler(ctx *macaron.Context) {
 		ctx.Params("project"))
 	commit := ctx.Params("sha")
 
-	report, err := models.GetReport(project, commit)
+	/*report, err := models.GetReport(project, commit)
 
 	if err.Error() == "Report does not exist" {
 		ctx.Error(404, err.Error())
@@ -53,13 +51,11 @@ func ReportPageHandler(ctx *macaron.Context) {
 		ctx.Error(500, "Server error")
 		log.Printf("Failed to get report %s: %s", project, err)
 		return
-	}
+	}*/
 
 	ctx.Data["Project"] = project
 	ctx.Data["Commit"] = commit
 	ctx.Data["CommitShort"] = commit[:8]
-
-	fmt.Printf("Report has %d issues", len(report.Issues))
 
 	ctx.HTML(200, "report")
 }

@@ -1,3 +1,6 @@
+// Package settings manages everything which relates to configuring
+// the learning bot. It manages everything related to the configuration of
+// the learning bot, cron jobs, and the GitLab API client.
 package settings
 
 import (
@@ -14,6 +17,9 @@ var (
 	Config          Configuration
 )
 
+// Configuration represents an entire configuration file
+// of the learning bot. This excludes the ActiveProjects
+// configuration.
 type Configuration struct {
 	SiteTitle             string          `toml:"site_title"`
 	BotPrivateToken       string          `toml:"bot_private_access_token"`
@@ -26,6 +32,7 @@ type Configuration struct {
 	CheckActiveRepoCron   string          `toml:"check_active_repositories_cron"`
 }
 
+// DBType represents the database driver type, such as MySQL or SQLite.
 type DBType int
 
 const (
@@ -33,6 +40,8 @@ const (
 	MySQL
 )
 
+// DBConfiguration represents a database configuration, including whether
+// it is a MySQL or SQLite configuration.
 type DBConfiguration struct {
 	Type    DBType `toml:"type,string"`
 	Host    string `toml:"host,omitempty"` // For MySQL...
@@ -42,6 +51,8 @@ type DBConfiguration struct {
 	Path    string `toml:"path,omitempty"` // For SQLite
 }
 
+// NewConfiguration creates a new configuration struct with default
+// fields prefilled.
 func NewConfiguration(token string, instance string, checkstyleJar string,
 	databaseConfig DBConfiguration) Configuration {
 	return Configuration{
@@ -65,6 +76,8 @@ func init() {
 	}
 }
 
+// LoadConfig loads the configuration from file, then passively loading
+// ActiveProjects.
 func LoadConfig() {
 	var err error
 	if _, err = toml.DecodeFile(WorkingDir+"/"+ConfigPath, &Config); err != nil {
