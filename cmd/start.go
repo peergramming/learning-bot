@@ -4,6 +4,7 @@ import (
 	"github.com/urfave/cli"
 	macaron "gopkg.in/macaron.v1"
 
+	"gitlab.com/gitedulab/learning-bot/modules/cron"
 	"gitlab.com/gitedulab/learning-bot/modules/settings"
 	"gitlab.com/gitedulab/learning-bot/routes"
 )
@@ -17,7 +18,7 @@ var CmdStart = cli.Command{
 
 func start(clx *cli.Context) error {
 	settings.LoadConfig()
-	settings.SetupCron()
+	cron.SetupCron()
 
 	// Run macaron
 	m := macaron.Classic()

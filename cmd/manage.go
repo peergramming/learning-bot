@@ -21,7 +21,7 @@ func runManage(clx *cli.Context) error {
 	} else {
 		fmt.Printf("Current active projects (%d):\n", len(settings.ActiveProjs.Projects))
 		for id, proj := range settings.ActiveProjs.Projects {
-			fmt.Printf("\t%d: %s/%s\n", id, proj.Namespace, proj.Project)
+			fmt.Printf("\t%d: %s\n", id, proj.GetFullPath())
 		}
 	}
 	fmt.Println()

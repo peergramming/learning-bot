@@ -10,11 +10,9 @@ import (
 )
 
 var (
-	WorkingDir      string
-	ConfigPath      = "config.toml"
-	ActiveProjsPath = "active-projects.toml"
-	ActiveProjs     ActiveProjects
-	Config          Configuration
+	WorkingDir string
+	ConfigPath = "config.toml"
+	Config     Configuration
 )
 
 // Configuration represents an entire configuration file

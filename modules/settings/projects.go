@@ -2,9 +2,15 @@ package settings
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/BurntSushi/toml"
 	"io/ioutil"
 	"log"
+)
+
+var (
+	ActiveProjsPath = "active-projects.toml"
+	ActiveProjs     ActiveProjects
 )
 
 // ActiveProjects represents the active projects list file,
@@ -18,6 +24,10 @@ type ActiveProjects struct {
 type Project struct {
 	Namespace string `toml:"namespace"`
 	Project   string `toml:"project"`
+}
+
+func (p *Project) GetFullPath() string {
+	return fmt.Sprintf("%s/%s", p.Namespace, p.Project)
 }
 
 // IsActiveProject returns whether a project exists in the active projects
