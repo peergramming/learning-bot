@@ -13,8 +13,9 @@ var c = cron.New()
 
 // SetupCron sets up all configured cron jobs.
 func SetupCron() {
-	checkRepositories()
-	c.AddFunc(settings.Config.CheckActiveRepoCron, checkRepositories)
+	go checkRepositoriesCron()
+	c.AddFunc(settings.Config.CheckActiveRepoCron, checkRepositoriesCron)
+	c.Start()
 }
 
 // createNewIssue creates a new issue in the GitLab project's issue
@@ -28,15 +29,17 @@ func createNewIssue(git *gitlab.Client, project string) (*gitlab.Issue, error) {
 	return issue, err
 }
 
-// checkRepositories checks active git repositories
-func checkRepositories() {
+// checkRepositories checks active git repositories, cron job.
+func checkRepositoriesCron() {
+	log.Println("Cron: Starting to check active repositories")
 	// NOTE: This means that if any changes
 	// are applied to the list, it is lost.
 	settings.LoadActiveProjs(false)
 	git := settings.GetGitLabClient()
 
-	for _, proj := range settings.ActiveProjs.Projects {
+	for _, proj := range settings.ActiveProjs.Projects { // TODO concurrent checking
 		path := proj.GetFullPath()
+		log.Printf("Cron: Checking project: %s\n", path)
 
 		repo, err := models.GetRepo(path)
 		if err != nil && err.Error() == "Repository does not exist" {
@@ -54,5 +57,8 @@ func checkRepositories() {
 			log.Fatalf("Cron: Failed to load repository %s: %s", path, err)
 			continue
 		}
+
+		// TODO: Run test, and update issue
 	}
+	log.Println("Cron: End of checking active repositories")
 }
