@@ -39,7 +39,7 @@
 		</module>
 		<module name="IllegalThrows"/>
 		<module name="InnerAssignment"/>
-		<module name="MagicNumber"/>
+		<!--<module name="MagicNumber"/>-->
 		<module name="ModifiedControlVariable"/>
 		<module name="NestedForDepth">
       		<property name="max" value="2"/>
@@ -57,8 +57,7 @@
 		<module name="SimplifyBooleanReturn"/>
 		<module name="StringLiteralEquality"/>
 		<module name="UnnecessaryParentheses"/>
-        <module name="OneStatementPerLine"/>
-        <module name="ArrayTypeStyle"/>
+		<!--<module name="ArrayTypeStyle"/>-->
         <module name="MissingSwitchDefault"/>
         <module name="FallThrough"/>
         <module name="UpperEll"/>
