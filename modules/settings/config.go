@@ -7,6 +7,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"log"
 	"os"
+	"time"
 )
 
 var (
@@ -28,6 +29,8 @@ type Configuration struct {
 	LMSTitle              string          `toml:"lms_title,omitempty"`
 	LMSURL                string          `toml:"lms_url,omitempty"`
 	CheckActiveRepoCron   string          `toml:"check_active_repositories_cron"`
+	TimezoneName          string          `toml:"timezone"`
+	Timezone              *time.Location  `toml:"-"`
 }
 
 // DBType represents the database driver type, such as MySQL or SQLite.
@@ -63,6 +66,7 @@ func NewConfiguration(token string, instance string, checkstyleJar string,
 		LMSTitle:              "Vision",
 		LMSURL:                "https://vision.hw.ac.uk",
 		CheckActiveRepoCron:   "@every 1h45m",
+		TimezoneName:          "Europe/London",
 	}
 }
 
@@ -80,6 +84,10 @@ func LoadConfig() {
 	var err error
 	if _, err = toml.DecodeFile(WorkingDir+"/"+ConfigPath, &Config); err != nil {
 		log.Panicf("Failed to load the configuration file! Make sure you generate a configuration first! Error: %s", err)
+	}
+	Config.Timezone, err = time.LoadLocation(Config.TimezoneName)
+	if err != nil {
+		log.Panicf("Invalid timezone in config: %s", err)
 	}
 
 	LoadActiveProjs(false)
