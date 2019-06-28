@@ -13,6 +13,7 @@ var c = cron.New()
 
 // SetupCron sets up all configured cron jobs.
 func SetupCron() {
+	checkRepositories()
 	c.AddFunc(settings.Config.CheckActiveRepoCron, checkRepositories)
 }
 
@@ -20,7 +21,7 @@ func SetupCron() {
 // tracker with default description.
 func createNewIssue(git *gitlab.Client, project string) (*gitlab.Issue, error) {
 	issueOpt := &gitlab.CreateIssueOptions{
-		Title:       gitlab.String(fmt.Sprintf("[%s] Your code report", settings.Config.SiteTitle)),
+		Title:       gitlab.String(fmt.Sprintf("[%s] Your code report 📊", settings.Config.SiteTitle)),
 		Description: gitlab.String("Hey!\n\nYou report is currently being generated.\n\nSit tight!"),
 	}
 	issue, _, err := git.Issues.CreateIssue(project, issueOpt)
@@ -37,8 +38,8 @@ func checkRepositories() {
 	for _, proj := range settings.ActiveProjs.Projects {
 		path := proj.GetFullPath()
 
-		repo, err := models.GetRepo(proj.GetFullPath())
-		if err.Error() == "Repository does not exist" {
+		repo, err := models.GetRepo(path)
+		if err != nil && err.Error() == "Repository does not exist" {
 			// Repository does not exist, let's create an issue.
 			var issue *gitlab.Issue
 			issue, err = createNewIssue(git, path) // TODO: mechanism if a repo is deleted and recreated

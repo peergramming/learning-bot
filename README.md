@@ -74,6 +74,28 @@ edited, if required). And the web server (and bot) can start.
 $ ./learning-bot run
 ```
 
+## Further configuration
+
+There are some default configuration values which aren't setup in the wizard. Here
+is the documentation for `config.toml`.
+
+- `site_title`: Title of the website and bot.
+- `bot_private_access_token`: Bot account's private access token.
+- `checkstyle_jar_path`: Path for the checkstyle JAR file, must be downloaded separately.
+- `checkstyle_config_path`: Path for the checkstyle configuration file, provided by the project.
+- `gitlab_instance_url`: The URL of the GitLab instance for the API, links and integration.
+- `lms_title`: Optional LMS link title.
+- `lms_url`: Optional LMS link URL.
+- `check_active_repositories_cron`: Cron job schedule interval. Learn more about format [here](https://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules).
+- `timezone`: Timezone used for report and database.
+- `database_configuration`: Database configuration field.
+  - `type`: Driver type; 0 for SQLite, 1 for MySQL.
+  - `host`: [MySQL] The host of the MySQL server.
+  - `name`: [MySQL] The name of the MySQL user.
+  - `ssl_mode`: [MySQL] The SSL/TLS mode of the MySQL connection.
+  - `path`: [SQLite] The path for the SQLite database file.
+
+
 ## Installing the Project Service (GitLab)
 
 The project service can be installed by coping the file `learning_bot_service.rb` in

@@ -15,7 +15,7 @@ var (
 	tables []interface{}
 )
 
-func init() {
+func SetupEngine() *xorm.Engine {
 	var err error
 	dbConf := &settings.Config.DatabaseConfiguration
 
@@ -39,4 +39,5 @@ func init() {
 	)
 
 	engine.Sync(tables...)
+	return engine
 }
