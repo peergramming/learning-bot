@@ -26,6 +26,8 @@ type Project struct {
 	Project   string `toml:"project"`
 }
 
+// GetFullPath returns the full path (namespace / project) of
+// the project.
 func (p *Project) GetFullPath() string {
 	return fmt.Sprintf("%s/%s", p.Namespace, p.Project)
 }

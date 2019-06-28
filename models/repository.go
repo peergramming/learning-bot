@@ -25,3 +25,15 @@ func GetRepo(id string) (Repository, error) {
 	}
 	return r, nil
 }
+
+// AddRepo adds a new Repository to the database.
+// It returns the columns affected and error (if exists).
+func AddRepo(r *Repository) (int64, error) {
+	return engine.Insert(r)
+}
+
+// UpdateRepo updates a Repository in the database.
+// It returns the columns affected and error (if exists).
+func UpdateRepo(r *Repository) (int64, error) {
+	return engine.Update(r)
+}
