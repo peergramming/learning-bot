@@ -25,10 +25,13 @@ add a badge to each commit, which would redirect to the report page.
 The following packages must be installed on your system.
 
 - git
-- go 1.12
+- Go *(tested with 1.12)*
+- OpenJDK Runtime Environment *(tested with 1.8.0)*
+- unzip *(Unix utility)*
 
 The program supports MySQL, but it is optional requirement as an SQLite
-option is available.
+option is available. No additional packages are needed to be installed for
+database functionality.
 
 ## Installation from source
 

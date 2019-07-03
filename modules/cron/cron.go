@@ -8,6 +8,7 @@ import (
 	"gitlab.com/gitedulab/learning-bot/modules/settings"
 	"io/ioutil"
 	"log"
+	"os/exec"
 	"time"
 )
 
@@ -67,7 +68,7 @@ func checkRepositoriesCron() {
 		if err != nil && err.Error() == "Repository does not exist" {
 			models.AddRepo(&repo)
 		} else if err != nil {
-			log.Fatalf("Cron: %s: Failed to load repository: %s\n", path, err)
+			log.Printf("Cron: %s: Failed to load repository: %s\n", path, err)
 			continue
 		}
 
@@ -94,7 +95,7 @@ func checkRepositoriesCron() {
 			var issue *gitlab.Issue
 			issue, err = createNewIssue(git, path)
 			if err != nil {
-				log.Fatalf("Cron: %s: Failed to create a new issue: %s\n",
+				log.Printf("Cron: %s: Failed to create a new issue: %s\n",
 					path, err)
 				continue
 			}
@@ -102,17 +103,28 @@ func checkRepositoriesCron() {
 			models.UpdateRepo(&repo)
 		}
 
+		// Download archive as zip
 		var arch []byte
 		arch, err = getRepoArchive(git, path, latestCommit.ID)
 		dir, err := ioutil.TempDir("", fmt.Sprintf("learning-bot-%s-%s-%s", proj.Namespace, proj.Project, latestCommit.ID[6:]))
 		if err != nil {
-			log.Fatalf("Cron: %s: Cannot create a temporary directory, is disk space full?\n", path)
+			log.Printf("Cron: %s: Cannot create a temporary directory, is disk space full?\n", path)
 			continue
 		}
 		archPath := fmt.Sprintf("%s/archive.zip", dir)
 		ioutil.WriteFile(archPath, arch, 0644)
+		var o []byte
 
-		// TODO: Run test, and update issue
+		// Unzip project archive
+		o, err = exec.Command("unzip", "-d", dir, archPath).Output()
+		if err != nil {
+			log.Printf("Cron: %s: Failed to extract project archive: %s %s\n", path, err, o)
+			continue
+		}
+		newPath := fmt.Sprintf("%s/%s-%s-%s", dir, proj.Project, latestCommit.ID, latestCommit.ID)
+		log.Printf("Cron: %s: Downloaded: %s\n", path, newPath)
+
+		// TODO: Run checkstyle test, parse, and update issue
 
 	}
 	log.Println("Cron: End of checking active repositories")
