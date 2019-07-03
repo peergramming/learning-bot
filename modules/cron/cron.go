@@ -7,6 +7,7 @@ import (
 	"gitlab.com/gitedulab/learning-bot/models"
 	"gitlab.com/gitedulab/learning-bot/modules/settings"
 	"log"
+	"time"
 )
 
 var c = cron.New()
@@ -29,6 +30,15 @@ func createNewIssue(git *gitlab.Client, project string) (*gitlab.Issue, error) {
 	return issue, err
 }
 
+func getRepoArchive(git *gitlab.Client, project string, sha string) ([]byte, error) {
+	archiveOpt := &gitlab.ArchiveOptions{
+		Format: gitlab.String("zip"),
+		SHA:    gitlab.String(sha),
+	}
+	archive, _, err := git.Repositories.Archive(project, archiveOpt)
+	return archive, err
+}
+
 // checkRepositories checks active git repositories, cron job.
 func checkRepositoriesCron() {
 	log.Println("Cron: Starting to check active repositories")
@@ -36,29 +46,52 @@ func checkRepositoriesCron() {
 	// are applied to the list, it is lost.
 	settings.LoadActiveProjs(false)
 	git := settings.GetGitLabClient()
+	var err error
 
 	for _, proj := range settings.ActiveProjs.Projects { // TODO concurrent checking
+		start := time.Now()
 		path := proj.GetFullPath()
-		log.Printf("Cron: Checking project: %s\n", path)
+		log.Printf("Cron: %s: Checking project...\n", path)
+		var repo models.Repository
 
-		repo, err := models.GetRepo(path)
+		// Load Repository from database
+		repo, err = models.GetRepo(path)
 		if err != nil && err.Error() == "Repository does not exist" {
-			// Repository does not exist, let's create an issue.
-			var issue *gitlab.Issue
-			issue, err = createNewIssue(git, path) // TODO: mechanism if a repo is deleted and recreated
-			if err != nil {
-				log.Fatalf("Cron: Failed to create a new issue for repository %s: %s",
-					path, err)
-				continue
-			}
-			repo.IssueID = issue.ID
 			models.AddRepo(&repo)
 		} else if err != nil {
-			log.Fatalf("Cron: Failed to load repository %s: %s", path, err)
+			log.Fatalf("Cron: %s: Failed to load repository: %s\n", path, err)
 			continue
 		}
 
+		// Load project's commits
+		var commits []*gitlab.Commit
+		commits, resp, err := git.Commits.ListCommits(path, &gitlab.ListCommitsOptions{})
+		if resp.StatusCode != 200 {
+			log.Printf("Cron: %s: Cannot access commits, response code %s\n", path, resp.Status)
+			continue
+		} else if len(commits) == 0 {
+			log.Printf("Cron: %s: Project has no commits, cannot proceed...\n", path)
+			continue
+		}
+
+		log.Printf("Latest commit: %s\n", commits[0].ID)
+
+		// Create a GitLab issue
+		var issue *gitlab.Issue
+		issue, err = createNewIssue(git, path)
+		if err != nil {
+			log.Fatalf("Cron: %s: Failed to create a new issue: %s\n",
+				path, err)
+			continue
+		}
+
+		repo.IssueID = issue.ID
+		models.UpdateRepo(&repo)
+
 		// TODO: Run test, and update issue
+
+		elapsed := time.Since(start)
+		log.Printf("Cron: %s: Done checking project (%s)\n", path, elapsed)
 	}
 	log.Println("Cron: End of checking active repositories")
 }
