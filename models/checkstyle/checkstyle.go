@@ -28,8 +28,8 @@ func GenerateReport(checkstyleOutput string, commitSHA string, path string) mode
 		if !ok {
 			continue
 		}
-		issue.FilePath = strings.Split(issue.FilePath, path)[1] // remove /tmp/x from report
 		issue.SourceSnippet = getSnippet(issue.FilePath, issue.LineNumber, issue.ColumnNumber)
+		issue.FilePath = strings.Split(issue.FilePath, path)[1] // remove /tmp/x from report
 
 		issues = append(issues, issue)
 	}
@@ -61,9 +61,12 @@ func getSnippet(path string, line int, col int) string {
 
 	// Iterate through lines and add them
 	lines := strings.Split(string(file), "\n")
-	for i, line := range lines {
-		if i >= startLine && i <= startLine {
-			snippet = fmt.Sprint(snippet, line, "\n")
+	for i, lineStr := range lines {
+		if i+1 >= startLine && i+1 <= startLine {
+			snippet = snippet + lineStr
+			if i+1 != line {
+				snippet = snippet + "\n"
+			}
 		}
 	}
 
@@ -71,10 +74,12 @@ func getSnippet(path string, line int, col int) string {
 	if col != 0 {
 		var space string
 		for i := 0; i < col-1; i++ {
-			space = fmt.Sprint(space, " ")
+			space = space + " "
 		}
-		space = fmt.Sprint("^")
+		space = space + "^"
+		snippet = snippet + "\n" + space
 	}
+
 	return snippet
 }
 

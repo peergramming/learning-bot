@@ -134,7 +134,8 @@ func checkRepositoriesCron() {
 			continue
 		}
 		report := checkstyle.GenerateReport(string(o), latestCommit.ID, newPath)
-		fmt.Println(report)
+		repo.Reports = append(repo.Reports, report)
+		models.UpdateRepo(&repo)
 
 	}
 	log.Println("Cron: End of checking active repositories")
