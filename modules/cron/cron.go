@@ -6,6 +6,7 @@ import (
 	"github.com/xanzy/go-gitlab"
 	"gitlab.com/gitedulab/learning-bot/models"
 	"gitlab.com/gitedulab/learning-bot/modules/settings"
+	"io/ioutil"
 	"log"
 	"time"
 )
@@ -49,8 +50,15 @@ func checkRepositoriesCron() {
 	var err error
 
 	for _, proj := range settings.ActiveProjs.Projects { // TODO concurrent checking
-		start := time.Now()
 		path := proj.GetFullPath()
+
+		// Benchmarking
+		start := time.Now()
+		defer func(path string, start time.Time) {
+			elapsed := time.Since(start)
+			log.Printf("Cron: %s: Done checking project (%s)\n", path, elapsed)
+		}(path, start)
+
 		log.Printf("Cron: %s: Checking project...\n", path)
 		var repo models.Repository
 
@@ -74,24 +82,38 @@ func checkRepositoriesCron() {
 			continue
 		}
 
-		log.Printf("Latest commit: %s\n", commits[0].ID)
-
-		// Create a GitLab issue
-		var issue *gitlab.Issue
-		issue, err = createNewIssue(git, path)
-		if err != nil {
-			log.Fatalf("Cron: %s: Failed to create a new issue: %s\n",
-				path, err)
+		// Check whether report is already generated for latest commit
+		latestCommit := commits[0]
+		if repo.DoesReportExist(latestCommit.ID) {
+			log.Printf("Cron: %s: Report is already latest\n", path)
 			continue
 		}
 
-		repo.IssueID = issue.ID
-		models.UpdateRepo(&repo)
+		// Create a GitLab issue, if doesn't exist
+		if repo.IssueID == 0 {
+			var issue *gitlab.Issue
+			issue, err = createNewIssue(git, path)
+			if err != nil {
+				log.Fatalf("Cron: %s: Failed to create a new issue: %s\n",
+					path, err)
+				continue
+			}
+			repo.IssueID = issue.ID
+			models.UpdateRepo(&repo)
+		}
+
+		var arch []byte
+		arch, err = getRepoArchive(git, path, latestCommit.ID)
+		dir, err := ioutil.TempDir("", fmt.Sprintf("learning-bot-%s-%s-%s", proj.Namespace, proj.Project, latestCommit.ID[6:]))
+		if err != nil {
+			log.Fatalf("Cron: %s: Cannot create a temporary directory, is disk space full?\n", path)
+			continue
+		}
+		archPath := fmt.Sprintf("%s/archive.zip", dir)
+		ioutil.WriteFile(archPath, arch, 0644)
 
 		// TODO: Run test, and update issue
 
-		elapsed := time.Since(start)
-		log.Printf("Cron: %s: Done checking project (%s)\n", path, elapsed)
 	}
 	log.Println("Cron: End of checking active repositories")
 }

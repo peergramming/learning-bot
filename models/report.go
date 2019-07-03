@@ -2,8 +2,10 @@ package models
 
 // Report represents a report of a specific commit of a project.
 type Report struct {
-	Commit              string `xorm:"varchar(40) notnull"`
+	ReportID            int64  `xorm:"pk autoincr"`
+	Commit              string `xorm:"index varchar(40) notnull"`
 	RawCheckstyleOutput string `xorm:"mediumtext"`
+	CreatedUnix         int64  `xorm:"created"`
 	Issues              []Issue
 }
 
