@@ -20,7 +20,7 @@ var CmdConfig = cli.Command{
 
 var (
 	defaultInstance       = "https://gitlab.com"
-	defaultCheckstylePath = "checkstyle-8.21-all.jar"
+	defaultCheckstylePath = "checkstyle-8.22-all.jar"
 	defaultDriver         = "sqlite"
 	defaultDBPath         = "./data.db"
 	defaultDBHost         = "localhost:3306"

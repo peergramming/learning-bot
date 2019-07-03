@@ -6,3 +6,4 @@ api.md
 config.toml
 active-projects.toml
 *.db
+*.jar

@@ -126,6 +126,14 @@ func checkRepositoriesCron() {
 
 		// TODO: Run checkstyle test, parse, and update issue
 
+		// Run checkstyle
+		o, err = exec.Command("java", "-jar", settings.Config.CheckstyleJarPath, "-c", settings.Config.CheckstyleConfigPath, newPath).Output()
+		if err != nil {
+			log.Printf("Cron: %s: Cannot run checkstyle on project: %s, %s\n", path, err, o)
+			continue
+		}
+		log.Printf("%s", o)
+
 	}
 	log.Println("Cron: End of checking active repositories")
 }
