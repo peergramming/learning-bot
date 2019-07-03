@@ -149,7 +149,7 @@ func checkRepositoriesCron() {
 
 		err = updateIssue(git, &repo, &report)
 		if err != nil {
-			log.Printf("Cron: %s: Cannot update issue: %s\n", err)
+			log.Printf("Cron: %s: Cannot update issue: %s\n", path, err)
 			continue
 		}
 
