@@ -45,6 +45,10 @@ func runConfig(clx *cli.Context) error {
 		instance = defaultInstance
 	}
 
+	fmt.Printf("Enter your bot site URL (incl. port): ")
+	var siteURL string
+	fmt.Scanln(&siteURL)
+
 	fmt.Println("You have to generate a GitLab personal access token with at least the following scopes:")
 	fmt.Println("\tapi, read_user, read_repository, write_repository")
 	fmt.Println("A token can be generated at: https://gitlab.com/profile/personal_access_tokens")
@@ -97,7 +101,7 @@ func runConfig(clx *cli.Context) error {
 	}
 
 	// Generate struct configuration
-	config := settings.NewConfiguration(token, instance, checkstylePath, dbConfig)
+	config := settings.NewConfiguration(token, siteURL, instance, checkstylePath, dbConfig)
 
 	// Write to file
 	var err error

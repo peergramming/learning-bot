@@ -33,6 +33,16 @@ func createNewIssue(git *gitlab.Client, project string) (*gitlab.Issue, error) {
 	return issue, err
 }
 
+func updateIssue(git *gitlab.Client, repo *models.Repository, report *models.Report) error {
+	link := fmt.Sprintf("%s/%s/report/%s", settings.Config.SiteURL, repo.ProjectID, report.Commit)
+	updateIssue := &gitlab.UpdateIssueOptions{
+		Description: gitlab.String(fmt.Sprintf("Hey!\n\nReport has been generated on commit %s.\n\n[View report](%s)", report.Commit, link)),
+		StateEvent:  gitlab.String("reopen"),
+	}
+	_, _, err := git.Issues.UpdateIssue(repo.ProjectID, repo.IssueID, updateIssue)
+	return err
+}
+
 func getRepoArchive(git *gitlab.Client, project string, sha string) ([]byte, error) {
 	archiveOpt := &gitlab.ArchiveOptions{
 		Format: gitlab.String("zip"),
@@ -100,7 +110,7 @@ func checkRepositoriesCron() {
 					path, err)
 				continue
 			}
-			repo.IssueID = issue.ID
+			repo.IssueID = issue.IID
 			models.UpdateRepo(&repo)
 		}
 
@@ -136,6 +146,12 @@ func checkRepositoriesCron() {
 		report := checkstyle.GenerateReport(string(o), latestCommit.ID, newPath)
 		repo.Reports = append(repo.Reports, report)
 		models.UpdateRepo(&repo)
+
+		err = updateIssue(git, &repo, &report)
+		if err != nil {
+			log.Printf("Cron: %s: Cannot update issue: %s\n", err)
+			continue
+		}
 
 	}
 	log.Println("Cron: End of checking active repositories")

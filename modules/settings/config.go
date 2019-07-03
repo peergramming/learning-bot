@@ -21,6 +21,7 @@ var (
 // configuration.
 type Configuration struct {
 	SiteTitle               string          `toml:"site_title"`
+	SiteURL                 string          `toml:"site_url"`
 	BotPrivateToken         string          `toml:"bot_private_access_token"`
 	CheckstyleJarPath       string          `toml:"checkstyle_jar_path"`
 	CheckstyleConfigPath    string          `toml:"checkstyle_config_path"`
@@ -55,10 +56,11 @@ type DBConfiguration struct {
 
 // NewConfiguration creates a new configuration struct with default
 // fields prefilled.
-func NewConfiguration(token string, instance string, checkstyleJar string,
+func NewConfiguration(token string, siteURL string, instance string, checkstyleJar string,
 	databaseConfig DBConfiguration) Configuration {
 	return Configuration{
 		SiteTitle:               "Learning Bot",
+		SiteURL:                 siteURL,
 		BotPrivateToken:         token,
 		GitLabInstanceURL:       instance,
 		CheckstyleJarPath:       checkstyleJar,
