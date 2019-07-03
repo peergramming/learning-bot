@@ -91,6 +91,7 @@ is the documentation for `config.toml`.
 - `lms_url`: Optional LMS link URL.
 - `check_active_repositories_cron`: Cron job schedule interval. Learn more about format [here](https://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules).
 - `timezone`: Timezone used for report and database.
+- `code_snippet_include_previous_lines`: Maximum number of lines to include before troubled line in report code snippet.
 - `database_configuration`: Database configuration field.
   - `type`: Driver type; 0 for SQLite, 1 for MySQL.
   - `host`: [MySQL] The host of the MySQL server.

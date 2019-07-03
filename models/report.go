@@ -15,7 +15,8 @@ type Issue struct {
 	IssueID       int    `xorm:"autoincr pk"`
 	CheckName     string `xorm:"varchar(16) notnull"`
 	FilePath      string `xorm:"varchar(32) notnull"`
-	LineNumber    int    `xorm:"notnull"`
+	LineNumber    int    `xorm:"null"`
+	ColumnNumber  int    `xorm:"null"`
 	Description   string `xorm:"varchar(128) notnull"`
 	SourceSnippet string `xorm:"text null"`
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/robfig/cron"
 	"github.com/xanzy/go-gitlab"
 	"gitlab.com/gitedulab/learning-bot/models"
+	"gitlab.com/gitedulab/learning-bot/models/checkstyle"
 	"gitlab.com/gitedulab/learning-bot/modules/settings"
 	"io/ioutil"
 	"log"
@@ -132,7 +133,8 @@ func checkRepositoriesCron() {
 			log.Printf("Cron: %s: Cannot run checkstyle on project: %s, %s\n", path, err, o)
 			continue
 		}
-		log.Printf("%s", o)
+		report := checkstyle.GenerateReport(string(o), latestCommit.ID, newPath)
+		fmt.Println(report)
 
 	}
 	log.Println("Cron: End of checking active repositories")
