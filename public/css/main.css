@@ -49,14 +49,14 @@ pre {
 
 pre code {
   display: inline-block;
-  font-size: 0.8em;
+  font-size: 0.5em;
 }
 
 code {
-  font-size: 0.9em;
+  font-size: 0.7em;
   width: 100%;
   display: block;
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .highlight-line {
@@ -96,7 +96,7 @@ code {
   background-color: #dfe1e6;
   display: block;
   border-radius: 3px;
-  max-width: 480px;
+  max-width: 640px;
   white-space: normal;
   padding: 8px;
   margin-top: 24px;

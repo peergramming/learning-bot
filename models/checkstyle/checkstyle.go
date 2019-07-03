@@ -62,7 +62,7 @@ func getSnippet(path string, line int, col int) string {
 	// Iterate through lines and add them
 	lines := strings.Split(string(file), "\n")
 	for i, lineStr := range lines {
-		if i+1 >= startLine && i+1 <= startLine {
+		if i+1 >= startLine && i+1 <= line {
 			snippet = snippet + lineStr
 			if i+1 != line {
 				snippet = snippet + "\n"

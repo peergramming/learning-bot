@@ -96,7 +96,7 @@ func checkRepositoriesCron() {
 
 		// Check whether report is already generated for latest commit
 		latestCommit := commits[0]
-		if repo.DoesReportExist(latestCommit.ID) {
+		if _, ok := repo.GetReport(latestCommit.ID); ok {
 			log.Printf("Cron: %s: Report is already latest\n", path)
 			continue
 		}

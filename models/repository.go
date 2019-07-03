@@ -38,13 +38,13 @@ func UpdateRepo(r *Repository) (int64, error) {
 	return engine.Update(r)
 }
 
-// DoesReportExist returns whether a report with a specific
-// SHA1 exists.
-func (r *Repository) DoesReportExist(sha string) bool {
+// GetReport returns the report and whether it exists or not
+// based on the commit SHA.
+func (r *Repository) GetReport(sha string) (Report, bool) {
 	for _, rep := range r.Reports {
 		if rep.Commit == sha {
-			return true
+			return rep, true
 		}
 	}
-	return false
+	return Report{}, false
 }
