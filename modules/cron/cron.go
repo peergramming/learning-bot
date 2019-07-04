@@ -34,12 +34,12 @@ func createNewIssue(git *gitlab.Client, project string) (*gitlab.Issue, error) {
 }
 
 func updateIssue(git *gitlab.Client, repo *models.Repository, report *models.Report) error {
-	link := fmt.Sprintf("%s/%s/report/%s", settings.Config.SiteURL, repo.ProjectID, report.Commit)
+	link := fmt.Sprintf("%s/%s/report/%s", settings.Config.SiteURL, repo.RepoID, report.Commit)
 	updateIssue := &gitlab.UpdateIssueOptions{
 		Description: gitlab.String(fmt.Sprintf("Hey!\n\nReport has been generated on commit %s.\n\n[View report](%s)", report.Commit, link)),
 		StateEvent:  gitlab.String("reopen"),
 	}
-	_, _, err := git.Issues.UpdateIssue(repo.ProjectID, repo.IssueID, updateIssue)
+	_, _, err := git.Issues.UpdateIssue(repo.RepoID, repo.IssueID, updateIssue)
 	return err
 }
 
@@ -72,12 +72,12 @@ func checkRepositoriesCron() {
 		}(path, start)
 
 		log.Printf("Cron: %s: Checking project...\n", path)
-		var repo models.Repository
+		var repo *models.Repository
 
 		// Load Repository from database
 		repo, err = models.GetRepo(path)
 		if err != nil && err.Error() == "Repository does not exist" {
-			models.AddRepo(&repo)
+			models.AddRepo(repo)
 		} else if err != nil {
 			log.Printf("Cron: %s: Failed to load repository: %s\n", path, err)
 			continue
@@ -111,7 +111,7 @@ func checkRepositoriesCron() {
 				continue
 			}
 			repo.IssueID = issue.IID
-			models.UpdateRepo(&repo)
+			models.UpdateRepo(repo)
 		}
 
 		// Download archive as zip
@@ -144,10 +144,10 @@ func checkRepositoriesCron() {
 			continue
 		}
 		report := checkstyle.GenerateReport(string(o), latestCommit.ID, newPath)
-		repo.Reports = append(repo.Reports, report)
-		models.UpdateRepo(&repo)
+		reports := append(repo.Reports, report)
+		models.UpdateRepositoryReports(repo, reports)
 
-		err = updateIssue(git, &repo, &report)
+		err = updateIssue(git, repo, &report)
 		if err != nil {
 			log.Printf("Cron: %s: Cannot update issue: %s\n", path, err)
 			continue

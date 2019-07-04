@@ -21,7 +21,7 @@ var (
 
 // GenerateReport generates a report based on checkstyle's output.
 func GenerateReport(checkstyleOutput string, commitSHA string, path string) models.Report {
-	var issues []models.Issue
+	var issues []*models.Issue
 	lines := strings.Split(checkstyleOutput, "\n")
 	for _, line := range lines {
 		ok, issue := parseLineIssue(line)
@@ -85,12 +85,12 @@ func getSnippet(path string, line int, col int) string {
 
 // parseLineIssue parses a single line outputted by checkstyle into
 // an Issue, boolean determines whether parsing the line is successful.
-func parseLineIssue(line string) (bool, models.Issue) {
+func parseLineIssue(line string) (ok bool, issue *models.Issue) {
 	// TODO recover from panics here
 	if string(warnExp.Find([]byte(line))) != "[WARN] " {
-		return false, models.Issue{}
+		return false, nil
 	}
-	issue := models.Issue{}
+	issue = new(models.Issue)
 
 	warn := warnExp.Split(line, -1)              // warn[1] is Without warning
 	path := pathExp.Split(warn[1], -1)           // path[0] is path with line/col, path[1] is error description+checktype
