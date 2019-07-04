@@ -8,9 +8,9 @@ import (
 // It keeps track of the issue tracker post and all
 // the reports of that specific repository.
 type Repository struct {
-	RepoID string `xorm:"varchar(64) pk"`
-	IssueID   int    `xorm:"null"` // stored id of the main issue for checkstyle report
-	Reports   []*Report `xorm:"-"`
+	RepoID  string    `xorm:"varchar(64) pk"`
+	IssueID int       `xorm:"null"` // stored id of the main issue for checkstyle report
+	Reports []*Report `xorm:"-"`
 }
 
 // GetRepo returns the repository from the project ID.
@@ -23,7 +23,10 @@ func GetRepo(id string) (*Repository, error) {
 	} else if !has {
 		return r, errors.New("Repository does not exist")
 	}
-	r.getReports()
+	err = r.getReports()
+	if err != nil {
+		return r, err
+	}
 	return r, nil
 }
 

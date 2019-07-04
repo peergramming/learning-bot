@@ -4,11 +4,11 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
-	"xorm.io/core"
 	_ "github.com/mattn/go-sqlite3"
 	"gitlab.com/gitedulab/learning-bot/modules/settings"
 	"log"
 	"os"
+	"xorm.io/core"
 )
 
 var (
@@ -37,6 +37,7 @@ func SetupEngine() *xorm.Engine {
 	tables = append(tables,
 		new(Repository),
 		new(Report),
+		new(Issue),
 	)
 	engine.SetMapper(core.GonicMapper{})
 

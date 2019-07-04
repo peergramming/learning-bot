@@ -62,6 +62,7 @@ func ReportPageHandler(ctx *macaron.Context) {
 		ctx.Error(404, "Report does not exist")
 		return
 	}
+	rep.LoadIssues()
 
 	ctx.Data["Project"] = project
 	ctx.Data["Commit"] = commit

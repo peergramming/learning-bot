@@ -1,12 +1,16 @@
 package models
 
+import (
+	"github.com/go-xorm/xorm"
+)
+
 // Report represents a report of a specific commit of a project.
 type Report struct {
-	ReportID            int64  `xorm:"pk autoincr"`
-	RepositoryID        string `xorm:"varchar(64) notnull"`
-	Commit              string `xorm:"index varchar(40) notnull"`
-	RawCheckstyleOutput string `xorm:"mediumtext"`
-	CreatedUnix         int64  `xorm:"created"`
+	ReportID            int64    `xorm:"pk autoincr"`
+	RepositoryID        string   `xorm:"varchar(64) notnull"`
+	Commit              string   `xorm:"index varchar(40) notnull"`
+	RawCheckstyleOutput string   `xorm:"mediumtext"`
+	CreatedUnix         int64    `xorm:"created"`
 	Issues              []*Issue `xorm:"-"`
 }
 
@@ -27,7 +31,7 @@ func getReportsByRepoID(id string) (reports []*Report, err error) {
 	return reports, engine.Where("repository_id = ?", id).Find(&reports)
 }
 
-func UpdateRepositoryReports(repo *Repository, reports []Report) (err error) {
+func UpdateRepositoryReports(repo *Repository, reports []*Report) (err error) {
 	sess := engine.NewSession() // transaction
 	defer sess.Close()
 	if err = sess.Begin(); err != nil {
@@ -42,5 +46,29 @@ func UpdateRepositoryReports(repo *Repository, reports []Report) (err error) {
 		return err
 	}
 
+	for _, report := range reports {
+		err = report.updateIssues(sess)
+		if err != nil {
+			return err
+		}
+	}
+
 	return sess.Commit()
+}
+
+func (r *Report) updateIssues(sess *xorm.Session) (err error) {
+	if _, err = sess.Where("report_id = ?", r.ReportID).Delete(new(Issue)); err != nil {
+		return err
+	}
+	for _, issue := range r.Issues {
+		issue.ReportID = r.ReportID
+	}
+	if _, err = sess.Insert(r.Issues); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *Report) LoadIssues() (err error) {
+	return engine.Where("report_id = ?", r.ReportID).Find(&r.Issues)
 }
