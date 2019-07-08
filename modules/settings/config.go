@@ -30,6 +30,7 @@ type Configuration struct {
 	LMSTitle                string          `toml:"lms_title,omitempty"`
 	LMSURL                  string          `toml:"lms_url,omitempty"`
 	CheckActiveRepoCron     string          `toml:"check_active_repositories_cron"`
+	MaxCheckWorkers         int             `toml:"max_check_workers"`
 	TimezoneName            string          `toml:"timezone"`
 	Timezone                *time.Location  `toml:"-"`
 	CodeSnippetIncludeLines int             `toml:"code_snippet_include_previous_lines"`
@@ -69,6 +70,7 @@ func NewConfiguration(token string, siteURL string, instance string, checkstyleJ
 		LMSTitle:                "Vision",
 		LMSURL:                  "https://vision.hw.ac.uk",
 		CheckActiveRepoCron:     "@every 1h45m",
+		MaxCheckWorkers:         5,
 		TimezoneName:            "Europe/London",
 		CodeSnippetIncludeLines: 3,
 	}
