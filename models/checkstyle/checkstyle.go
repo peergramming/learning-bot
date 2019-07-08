@@ -20,7 +20,7 @@ var (
 )
 
 // GenerateReport generates a report based on checkstyle's output.
-func GenerateReport(checkstyleOutput string, commitSHA string, path string) models.Report {
+func GenerateReport(checkstyleOutput string, commitSHA string, path string) *models.Report {
 	var issues []*models.Issue
 	lines := strings.Split(checkstyleOutput, "\n")
 	for _, line := range lines {
@@ -34,7 +34,7 @@ func GenerateReport(checkstyleOutput string, commitSHA string, path string) mode
 		issues = append(issues, issue)
 	}
 
-	return models.Report{
+	return &models.Report{
 		Commit:              commitSHA,
 		RawCheckstyleOutput: checkstyleOutput,
 		Issues:              issues,
