@@ -7,6 +7,7 @@ import (
 	"gitlab.com/gitedulab/learning-bot/models"
 	"gitlab.com/gitedulab/learning-bot/modules/cron"
 	"gitlab.com/gitedulab/learning-bot/modules/settings"
+	"gitlab.com/gitedulab/learning-bot/modules/utils"
 	"gitlab.com/gitedulab/learning-bot/routes"
 )
 
@@ -17,7 +18,10 @@ var CmdStart = cli.Command{
 	Action:  start,
 }
 
-func start(clx *cli.Context) error {
+func start(clx *cli.Context) (err error) {
+	if err = utils.SystemPackagesCheck(); err != nil {
+		panic(err)
+	}
 	settings.LoadConfig()
 	engine := models.SetupEngine()
 	defer engine.Close()
