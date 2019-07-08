@@ -41,7 +41,6 @@ func updateIssue(git *gitlab.Client, repo *models.Repository, report *models.Rep
 		Description: gitlab.String(fmt.Sprintf("Hey!\n\nReport has been generated on commit %s.\n\n[View report](%s)", report.Commit, link)),
 		StateEvent:  gitlab.String("reopen"),
 	}
-	fmt.Println(repo.RepoID, repo.IssueID)
 	_, _, err := git.Issues.UpdateIssue(repo.RepoID, repo.IssueID, updateIssue)
 	return err
 }
@@ -59,7 +58,7 @@ func getRepoArchive(git *gitlab.Client, project string, sha string) ([]byte, err
 // checkGitLabProjectExists returns whether a GitLab project exists and accessible.
 func checkGitLabProjectExists(git *gitlab.Client, project string) (err error) {
 	_, resp, err := git.Projects.GetProject(project, &gitlab.GetProjectOptions{})
-	if resp.StatusCode != 200 {
+	if err != nil && resp.StatusCode != 200 {
 		return errors.New(fmt.Sprintf("Cannot access GitLab project, returned status code: %s", resp.Status))
 	} else if err != nil {
 		return err
@@ -82,7 +81,10 @@ func getCommits(git *gitlab.Client, project string) (commits []*gitlab.Commit, e
 // temporary directory. This function runs getRepoArchive.
 func downloadArchiveZip(git *gitlab.Client, project string, commit string, tempDir string) (path string, err error) {
 	var arch []byte
-	arch, err = getRepoArchive(git, path, commit)
+	arch, err = getRepoArchive(git, project, commit)
+	if err != nil {
+		return "", err
+	}
 	archPath := fmt.Sprintf("%s/archive.zip", tempDir)
 	err = ioutil.WriteFile(archPath, arch, 0644)
 	return archPath, err
@@ -99,14 +101,24 @@ func unzipProjectArchive(project *settings.Project, tempDir string, archPath str
 }
 
 // runCheckstyle runs checkstyle on a project and returns a report.
-func runCheckstyle(project string, checkPath string, commit string) (report *models.Report, err error) {
+func runCheckstyle(project string, report *models.Report, checkPath string, commit string) (err error) {
 	var o []byte
 	o, err = exec.Command("java", "-jar", settings.Config.CheckstyleJarPath, "-c", settings.Config.CheckstyleConfigPath, checkPath).Output()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	report = checkstyle.GenerateReport(string(o), commit, checkPath)
-	report.RepositoryID = project
+	report.Issues = checkstyle.GetIssues(string(o), commit, checkPath, report.ReportID)
+
+	return err
+}
+
+func createReport(git *gitlab.Client, project string, commit string) (report *models.Report, err error) {
+	report = &models.Report{
+		RepositoryID: project,
+		Commit:       commit,
+		Status:       models.InProgress,
+	}
+	err = models.AddReport(report)
 	return report, err
 }
 
@@ -121,6 +133,12 @@ func checkRepositoriesCron() {
 
 	for _, proj := range settings.ActiveProjs.Projects { // TODO concurrent checking
 		path := proj.GetFullPath()
+		// In case something panics
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("Cron: %s: recovering from: %s\n", path, r)
+			}
+		}()
 
 		// Benchmarking
 		start := time.Now()
@@ -133,6 +151,7 @@ func checkRepositoriesCron() {
 		var repo *models.Repository
 
 		// Load Repository from database
+		// CONC: A
 		repo, err = models.GetRepo(path)
 		if err != nil && err.Error() == "Repository does not exist" {
 			repo.RepoID = path
@@ -142,14 +161,13 @@ func checkRepositoriesCron() {
 			continue
 		}
 
-		fmt.Printf("Cron: %s: Has %d reports\n", path, len(repo.Reports))
-
 		// Check if GitLab project exists and/or accessible.
 		if err = checkGitLabProjectExists(git, path); err != nil {
 			log.Printf("Cron: %s: %s\n", path, err)
 			continue
 		}
 
+		// WAIT A
 		// Load project's commits
 		var commits []*gitlab.Commit
 		commits, err = getCommits(git, path)
@@ -177,6 +195,7 @@ func checkRepositoriesCron() {
 			repo.IssueID = issue.IID
 			models.UpdateRepo(repo)
 		}
+		// TODO discard repo
 
 		// Create a temporary directory
 		tempDir, err := ioutil.TempDir("", fmt.Sprintf("learning-bot-%s-%s-%s", proj.Namespace, proj.Project,
@@ -200,11 +219,21 @@ func checkRepositoriesCron() {
 		// Unzip project archive
 		var newPath string
 		newPath, err = unzipProjectArchive(&proj, tempDir, archPath, latestCommit.ID)
+		if err != nil {
+			log.Printf("Cron: %s: Unable to unzip project: %s\n", path, err)
+			continue
+		}
 		log.Printf("Cron: %s: Downloaded: %s\n", path, newPath)
 
 		// Run checkstyle
 		var report *models.Report
-		report, err = runCheckstyle(path, newPath, latestCommit.ID)
+		report, err = createReport(git, path, latestCommit.ID)
+		if err != nil {
+			log.Printf("Cron: %s: Unable to create report in DB: %s\n", path, err)
+			continue
+		}
+
+		err = runCheckstyle(path, report, newPath, latestCommit.ID)
 		if err != nil {
 			log.Printf("Cron: %s: Unable to run checkstyle: %s\n", path, err)
 			continue

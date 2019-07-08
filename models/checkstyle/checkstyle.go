@@ -19,26 +19,20 @@ var (
 	descExp    = regexp.MustCompile(`\. \[`)     // Matches the full stop at the end of error description.
 )
 
-// GenerateReport generates a report based on checkstyle's output.
-func GenerateReport(checkstyleOutput string, commitSHA string, path string) *models.Report {
-	var issues []*models.Issue
+// GetIssues generates issues based on checkstyle's output.
+func GetIssues(checkstyleOutput string, commitSHA string, path string, reportID int64) (issues []*models.Issue) {
 	lines := strings.Split(checkstyleOutput, "\n")
 	for _, line := range lines {
 		ok, issue := parseLineIssue(line)
 		if !ok {
 			continue
 		}
+		issue.ReportID = reportID
 		issue.SourceSnippet = getSnippet(issue.FilePath, issue.LineNumber, issue.ColumnNumber)
 		issue.FilePath = strings.Split(issue.FilePath, path)[1] // remove /tmp/x from report
-
 		issues = append(issues, issue)
 	}
-
-	return &models.Report{
-		Commit:              commitSHA,
-		RawCheckstyleOutput: checkstyleOutput,
-		Issues:              issues,
-	}
+	return issues
 }
 
 // getSnippet returns the lines of the code required for

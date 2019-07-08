@@ -1,17 +1,27 @@
 package models
 
 import (
+	"errors"
 	"github.com/go-xorm/xorm"
+)
+
+type ReportStatus int
+
+const (
+	InProgress = iota
+	Complete
+	Failed
 )
 
 // Report represents a report of a specific commit of a project.
 type Report struct {
-	ReportID            int64    `xorm:"pk autoincr"`
-	RepositoryID        string   `xorm:"varchar(64) notnull"`
-	Commit              string   `xorm:"index varchar(40) notnull"`
-	RawCheckstyleOutput string   `xorm:"mediumtext"`
-	CreatedUnix         int64    `xorm:"created"`
-	Issues              []*Issue `xorm:"-"`
+	ReportID            int64        `xorm:"pk autoincr"`
+	RepositoryID        string       `xorm:"varchar(64) notnull"`
+	Commit              string       `xorm:"index varchar(40) notnull"`
+	Status              ReportStatus `xorm:"notnull"`
+	RawCheckstyleOutput string       `xorm:"mediumtext"`
+	CreatedUnix         int64        `xorm:"created"`
+	Issues              []*Issue     `xorm:"-"`
 }
 
 // Issue represents a single issue, which is usually a part of
@@ -29,6 +39,22 @@ type Issue struct {
 
 func getReportsByRepoID(id string) (reports []*Report, err error) {
 	return reports, engine.Where("repository_id = ?", id).Find(&reports)
+}
+
+func AddReport(r *Report) (err error) {
+	if r == nil {
+		return errors.New("Report is nil")
+	}
+	_, err = engine.Insert(r)
+	return err
+}
+
+func UpdateReport(r *Report) (err error) {
+	if r == nil {
+		return errors.New("Report is nil")
+	}
+	_, err = engine.Update(r)
+	return err
 }
 
 func UpdateRepositoryReports(repo *Repository, reports []*Report) (err error) {
@@ -69,6 +95,7 @@ func (r *Report) updateIssues(sess *xorm.Session) (err error) {
 	return nil
 }
 
+// LoadIssues loads all issues in a report.
 func (r *Report) LoadIssues() (err error) {
 	return engine.Where("report_id = ?", r.ReportID).Find(&r.Issues)
 }
