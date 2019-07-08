@@ -108,6 +108,7 @@ func runCheckstyle(project string, report *models.Report, checkPath string, comm
 	if err != nil {
 		return err
 	}
+	report.Status = models.Complete
 	report.Issues = checkstyle.GetIssues(string(o), commit, checkPath, report.ReportID)
 
 	return err

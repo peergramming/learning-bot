@@ -7,6 +7,7 @@ import (
 	"gitlab.com/gitedulab/learning-bot/modules/utils"
 	macaron "gopkg.in/macaron.v1"
 	"log"
+	"time"
 )
 
 // HomepageHandler handles the index page, which contains a description of the program.
@@ -67,6 +68,7 @@ func ReportPageHandler(ctx *macaron.Context) {
 	ctx.Data["Project"] = project
 	ctx.Data["Commit"] = commit
 	ctx.Data["CommitShort"] = commit[:8]
+	ctx.Data["ReportGenDate"] = time.Unix(rep.CreatedUnix, 0).Format("Jan 2, 2006 at 3:04 PM")
 	ctx.Data["Report"] = rep
 	//ctx.Data["ReportGenDate"] = rep.Created
 

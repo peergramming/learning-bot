@@ -9,7 +9,11 @@
 <p>Commit: <a href="{{.GitLabInst}}/{{.Project}}/commit/{{.Commit}}">{{.CommitShort}}</a></p>
 <p>Report generated: {{.ReportGenDate}}</p>
 </div>
-
+{{if eq .Report.Status 0}}
+<p><b>Whoops!</b> Your report is currently being generated. Sit tight while I inspect your code!</p>
+{{ else if eq .Report.Status 2}}
+<p><b>Whoops!</b> I am having trouble generating a report for this commit! Ask for help if this keeps happening.</p>
+{{else}}
 {{range .Report.Issues}}
 <div class="issue-card">
 <div class="file">
@@ -26,7 +30,6 @@
 
 </div>
 {{end}}
-
-
+{{end}}
 </div>
 {{template "base/footer" .}}
