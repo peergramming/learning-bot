@@ -65,13 +65,13 @@
 
 		<!-- End of Humaid added modules -->
         <module name="OuterTypeFilename"/>
-        <module name="IllegalTokenText">
+		<!--<module name="IllegalTokenText">
             <property name="tokens" value="STRING_LITERAL, CHAR_LITERAL"/>
             <property name="format"
              value="\\u00(09|0(a|A)|0(c|C)|0(d|D)|22|27|5(C|c))|\\(0(10|11|12|14|15|42|47)|134)"/>
             <property name="message"
              value="Consider using special escape sequence instead of octal value or Unicode escaped value."/>
-        </module>
+	 </module>-->
         <module name="AvoidEscapedUnicodeCharacters">
             <property name="allowEscapesForControlCharacters" value="true"/>
             <property name="allowByTailComment" value="true"/>
@@ -145,13 +145,13 @@
             <property name="allowedAbbreviationLength" value="1"/>
         </module>
         <module name="VariableDeclarationUsageDistance"/>
-        <module name="CustomImportOrder">
+		<!--<module name="CustomImportOrder">
             <property name="sortImportsInGroupAlphabetically" value="true"/>
             <property name="separateLineBetweenGroups" value="true"/>
             <property name="customImportOrderRules" value="STATIC###THIRD_PARTY_PACKAGE"/>
-        </module>
-        <module name="MethodParamPad"/>
-        <module name="ParenPad"/>
+		</module>-->
+		<module name="MethodParamPad"/>
+		<module name="ParenPad"/>
         <module name="OperatorWrap">
             <property name="option" value="NL"/>
             <property name="tokens"
