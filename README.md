@@ -28,6 +28,7 @@ The following packages must be installed on your system.
 - Go *(tested with 1.12)*
 - OpenJDK Runtime Environment *(tested with 1.8.0)*
 - unzip *(Unix utility)*
+- checkstyle *(jar, tested with 8.22)*
 
 The program supports MySQL, but it is optional requirement as an SQLite
 option is available. No additional packages are needed to be installed for
@@ -83,6 +84,7 @@ There are some default configuration values which aren't setup in the wizard. He
 is the documentation for `config.toml`.
 
 - `site_title`: Title of the website and bot.
+- `site_url`: The URL of the bot website, including port, used in issue tracker link.
 - `bot_private_access_token`: Bot account's private access token.
 - `checkstyle_jar_path`: Path for the checkstyle JAR file, must be downloaded separately.
 - `checkstyle_config_path`: Path for the checkstyle configuration file, provided by the project.

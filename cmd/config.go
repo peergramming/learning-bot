@@ -117,7 +117,7 @@ func runConfig(clx *cli.Context) error {
 	}
 
 	fmt.Printf("Configuration saved at %s/%s!\n", settings.WorkingDir, settings.ConfigPath)
-	fmt.Println("Review the configuration file to confirm the configuration is correct.")
+	fmt.Println("Review the configuration file to confirm the configuration and further customise the bot.")
 
 	return nil
 }
