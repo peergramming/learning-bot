@@ -18,9 +18,12 @@ import (
 // which starts the bot.
 var CmdStart = cli.Command{
 	Name:    "run",
-	Aliases: []string{"start"},
-	Usage:   "Start the learning bot",
-	Action:  start,
+	Aliases: []string{"start", "web"},
+	Flags: []cli.Flag{
+		cli.BoolFlag{Name: "no-web", Usage: "Does not run the web server"},
+	},
+	Usage:  "Start the learning bot",
+	Action: start,
 }
 
 func start(clx *cli.Context) (err error) {
@@ -32,27 +35,32 @@ func start(clx *cli.Context) (err error) {
 	defer engine.Close()
 	cron.SetupCron()
 
-	// Run macaron
-	m := macaron.Classic()
-	funcMap := []template.FuncMap{map[string]interface{}{
-		"Spacify": utils.Spacify,
-	}}
+	if clx.Bool("no-web") {
+		log.Println("Running cron-only without web server.")
+		select {}
+	} else {
+		// Run macaron
+		m := macaron.Classic()
+		funcMap := []template.FuncMap{map[string]interface{}{
+			"Spacify": utils.Spacify,
+		}}
 
-	m.Use(macaron.Renderer(macaron.RenderOptions{
-		Funcs: funcMap,
-	}))
+		m.Use(macaron.Renderer(macaron.RenderOptions{
+			Funcs: funcMap,
+		}))
 
-	// Web routes
-	m.Get("/", routes.HomepageHandler)
-	m.Get("/help/:check", routes.HelpCheckHandler)
+		// Web routes
+		m.Get("/", routes.HomepageHandler)
+		m.Get("/help/:check", routes.HelpCheckHandler)
 
-	// Project specific routes
-	m.Group("/:namespace/:project", func() {
-		m.Get("/report/:sha", routes.ReportPageHandler)
-		m.Get("/status/:sha.json", routes.APIGetReportStatusHandler)
-	})
+		// Project specific routes
+		m.Group("/:namespace/:project", func() {
+			m.Get("/report/:sha", routes.ReportPageHandler)
+			m.Get("/status/:sha.json", routes.APIGetReportStatusHandler)
+		})
 
-	log.Printf("Starting web server on port %s\n", settings.Config.SitePort)
-	log.Fatal(http.ListenAndServe(settings.Config.SitePort, m))
+		log.Printf("Starting web server on port %s\n", settings.Config.SitePort)
+		log.Fatal(http.ListenAndServe(settings.Config.SitePort, m))
+	}
 	return nil
 }

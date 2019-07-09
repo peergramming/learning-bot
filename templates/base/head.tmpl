@@ -15,7 +15,7 @@
             <nav class="nav-grey">
               <ul>
 				<li class="nav-right"><a target="_blank" href="{{.GitLabInst}}">GitLab</a></li>
-				<li class="nav-right"><a target="_blank" href="{{.LMSUrl}}">{{.LMSTitle}}</a></li>
+				{{if and .LMSUrl .LMSTitle}}<li class="nav-right"><a target="_blank" href="{{.LMSUrl}}">{{.LMSTitle}}</a></li>{{end}}
               </ul>
             </nav>
             <nav>
