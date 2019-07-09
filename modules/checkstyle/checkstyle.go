@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 var (
@@ -22,16 +23,29 @@ var (
 // GetIssues generates issues based on checkstyle's output.
 func GetIssues(checkstyleOutput string, commitSHA string, path string, reportID int64) (issues []*models.Issue) {
 	lines := strings.Split(checkstyleOutput, "\n")
+	var wg sync.WaitGroup
+	var mtx sync.Mutex
+	var workers = make(chan struct{}, 3)
 	for _, line := range lines {
-		ok, issue := parseLineIssue(line)
-		if !ok {
-			continue
-		}
-		issue.ReportID = reportID
-		issue.SourceSnippet = getSnippet(issue.FilePath, issue.LineNumber, issue.ColumnNumber)
-		issue.FilePath = strings.Split(issue.FilePath, path)[1] // remove /tmp/x from report
-		issues = append(issues, issue)
+		wg.Add(1)
+		workers <- struct{}{}
+		go func() {
+			defer func() {
+				wg.Done()
+				<-workers
+			}()
+			ok, issue := parseLineIssue(line)
+			if ok {
+				issue.ReportID = reportID
+				issue.SourceSnippet = getSnippet(issue.FilePath, issue.LineNumber, issue.ColumnNumber)
+				issue.FilePath = strings.Split(issue.FilePath, path)[1] // remove /tmp/x from report
+				mtx.Lock()                                              // prevent race condition
+				issues = append(issues, issue) // Note: Order not preserved
+				mtx.Unlock()
+			}
+		}()
 	}
+	wg.Wait()
 	return issues
 }
 
