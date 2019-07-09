@@ -1,5 +1,6 @@
 package checkstyle
 
+// Checks contains a list of all checkstyle check descriptions.
 var Checks = map[string]CheckDesc{
 	"ArrayTrailingComma": CheckDesc{Category: "coding",
 		Description: `A comma should be inserted at the end of the last element of the array if there are no left or right curly bracket on the same line.`,
@@ -195,6 +196,7 @@ doUnconditional();`},
 		Suggestion:  "Fix the identation of the comment to match the indentation level of the surrounding code."},
 }
 
+// CheckDesc represents a description of a checkstyle issue.
 type CheckDesc struct {
 	Category    string
 	Description string

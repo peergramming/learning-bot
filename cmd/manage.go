@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+// CmdManage represents a command-line command
+// which manages the list of active projects.
 var CmdManage = cli.Command{
 	Name:   "manage",
 	Usage:  "Manage active projects",

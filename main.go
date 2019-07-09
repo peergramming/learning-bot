@@ -8,6 +8,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// VERSION specifies the version of learning-bot
 var VERSION = "0.1.0"
 
 func main() {

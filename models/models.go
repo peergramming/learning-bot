@@ -2,9 +2,9 @@ package models
 
 import (
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql" // MySQL driver support
 	"github.com/go-xorm/xorm"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3" // SQLite driver support
 	"gitlab.com/gitedulab/learning-bot/modules/settings"
 	"log"
 	"os"
@@ -16,6 +16,8 @@ var (
 	tables []interface{}
 )
 
+// SetupEngine sets up the xorm engine according to the database configuration,
+// and syncs the schema.
 func SetupEngine() *xorm.Engine {
 	var err error
 	dbConf := &settings.Config.DatabaseConfiguration

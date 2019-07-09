@@ -11,6 +11,8 @@ import (
 	"gitlab.com/gitedulab/learning-bot/routes"
 )
 
+// CmdStart represents a command-line command
+// which starts the bot.
 var CmdStart = cli.Command{
 	Name:    "run",
 	Aliases: []string{"start"},

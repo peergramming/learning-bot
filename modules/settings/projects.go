@@ -9,8 +9,10 @@ import (
 )
 
 var (
+	// ActiveProjsPath is the path of the active projects list.
 	ActiveProjsPath = "active-projects.toml"
-	ActiveProjs     ActiveProjects
+	// ActiveProjs holds the list of all active projects.
+	ActiveProjs ActiveProjects
 )
 
 // ActiveProjects represents the active projects list file,

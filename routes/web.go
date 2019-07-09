@@ -3,7 +3,7 @@ package routes
 import (
 	"fmt"
 	"gitlab.com/gitedulab/learning-bot/models"
-	"gitlab.com/gitedulab/learning-bot/models/checkstyle"
+	"gitlab.com/gitedulab/learning-bot/modules/checkstyle"
 	"gitlab.com/gitedulab/learning-bot/modules/utils"
 	macaron "gopkg.in/macaron.v1"
 	"log"

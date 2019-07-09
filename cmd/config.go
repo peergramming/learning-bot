@@ -12,6 +12,8 @@ import (
 	"strings"
 )
 
+// CmdConfig represents a command-line command
+// which create a new configuration file.
 var CmdConfig = cli.Command{
 	Name:   "config",
 	Usage:  "Create a new configuration file",

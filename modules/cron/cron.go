@@ -6,7 +6,7 @@ import (
 	"github.com/robfig/cron"
 	"github.com/xanzy/go-gitlab"
 	"gitlab.com/gitedulab/learning-bot/models"
-	"gitlab.com/gitedulab/learning-bot/models/checkstyle"
+	"gitlab.com/gitedulab/learning-bot/modules/checkstyle"
 	"gitlab.com/gitedulab/learning-bot/modules/settings"
 	"io/ioutil"
 	"log"
@@ -60,7 +60,7 @@ func getRepoArchive(git *gitlab.Client, project string, sha string) ([]byte, err
 func checkGitLabProjectExists(git *gitlab.Client, project string) (err error) {
 	_, resp, err := git.Projects.GetProject(project, &gitlab.GetProjectOptions{})
 	if err != nil && resp.StatusCode != 200 {
-		return errors.New(fmt.Sprintf("Cannot access GitLab project, returned status code: %s", resp.Status))
+		return fmt.Errorf("Cannot access GitLab project, returned status code: %s", resp.Status)
 	} else if err != nil {
 		return err
 	}

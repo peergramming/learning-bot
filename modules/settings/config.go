@@ -11,9 +11,12 @@ import (
 )
 
 var (
+	// WorkingDir holds the current working directory of the application.
 	WorkingDir string
+	// ConfigPath holds the configuration path.
 	ConfigPath = "config.toml"
-	Config     Configuration
+	// Config holds the entire application configuration.
+	Config Configuration
 )
 
 // Configuration represents an entire configuration file
@@ -40,7 +43,9 @@ type Configuration struct {
 type DBType int
 
 const (
+	// SQLite is a serverless and file-based SQL driver.
 	SQLite = iota
+	// MySQL is a standard SQL driver.
 	MySQL
 )
 

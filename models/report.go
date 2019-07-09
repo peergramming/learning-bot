@@ -5,11 +5,15 @@ import (
 	"github.com/go-xorm/xorm"
 )
 
+// ReportStatus represents the generation status of a report.
 type ReportStatus int
 
 const (
+	// InProgress is when the report generation is in-progress.
 	InProgress = iota
+	// Complete is when the report generation is complete.
 	Complete
+	// Failed is when the report generation failed.
 	Failed
 )
 
@@ -41,6 +45,8 @@ func getReportsByRepoID(id string) (reports []*Report, err error) {
 	return reports, engine.Where("repository_id = ?", id).Find(&reports)
 }
 
+// AddReport adds a new report to the database. Returns an error
+// if fails.
 func AddReport(r *Report) (err error) {
 	if r == nil {
 		return errors.New("Report is nil")
@@ -49,6 +55,8 @@ func AddReport(r *Report) (err error) {
 	return err
 }
 
+// UpdateReport updates an existing report in the database. Returns
+// an error if fails.
 func UpdateReport(r *Report) (err error) {
 	if r == nil {
 		return errors.New("Report is nil")
@@ -57,6 +65,8 @@ func UpdateReport(r *Report) (err error) {
 	return err
 }
 
+// UpdateRepositoryReports updates the reports of a repository, including issues.
+// This function does not update the report, use UpdateReport() instead.
 func UpdateRepositoryReports(repo *Repository, reports []*Report) (err error) {
 	sess := engine.NewSession() // transaction
 	defer sess.Close()
