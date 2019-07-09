@@ -41,6 +41,7 @@ func SetupEngine() *xorm.Engine {
 		new(Report),
 		new(Issue),
 	)
+	engine.TZLocation = settings.Config.Timezone
 	engine.SetMapper(core.GonicMapper{})
 
 	engine.Sync(tables...)
