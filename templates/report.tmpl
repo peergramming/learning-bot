@@ -1,11 +1,10 @@
 {{template "base/head" .}}
 <div class="content">
-<h2>Report</h2>
+<h2>Report of <a href="{{.GitLabInst}}/{{.Project}}">{{.Project}}</a></h2>
 {{if .IsOldReport}}<div class="warning-banner banner">
 <p><b>Notice:</b> This is a report based on an old version of your code!
 </div>{{end}}
 <div class="meta">
-<p>Project: <a href="{{.GitLabInst}}/{{.Project}}">{{.Project}}</a></p>
 <p>Commit: <a href="{{.GitLabInst}}/{{.Project}}/commit/{{.Commit}}">{{.CommitShort}}</a></p>
 <p>Report generated: {{.ReportGenDate}}</p>
 </div>
@@ -17,10 +16,11 @@
 {{range .Report.Issues}}
 <div class="issue-card">
 <div class="file">
-<p class="file-title"><a target="_blank" href="{{$.GitLabInst}}/{{$.Project}}/blob/{{$.Commit}}{{.FilePath}}#L{{.LineNumber}}">{{.FilePath}}{{if .LineNumber}}:{{.LineNumber}}{{if.ColumnNumber}}:{{.ColumnNumber}}{{end}}{{end}}</a></p>
+<p class="file-title"><b>{{Spacify .CheckName}}</b>: <a target="_blank" href="{{$.GitLabInst}}/{{$.Project}}/blob/{{$.Commit}}{{.FilePath}}#L{{.LineNumber}}">{{.FilePath}}{{if .LineNumber}}:{{.LineNumber}}{{if.ColumnNumber}}:{{.ColumnNumber}}{{end}}{{end}}</a></p>
 </div>
 <div class="code-snippet">
-<code>{{.SourceSnippet}}</code>
+<pre><code class="java">{{.SourceSnippet}}</code></pre>
+
 </div>
 <div class="suggestion">
 <p>{{.Description}}</p>
@@ -29,7 +29,9 @@
 </div>
 
 </div>
+<hr>
 {{end}}
 {{end}}
 </div>
+<script>hljs.initHighlightingOnLoad();</script>
 {{template "base/footer" .}}

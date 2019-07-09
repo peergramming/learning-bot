@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/urfave/cli"
 	macaron "gopkg.in/macaron.v1"
+	"html/template"
 
 	"gitlab.com/gitedulab/learning-bot/models"
 	"gitlab.com/gitedulab/learning-bot/modules/cron"
@@ -31,7 +32,13 @@ func start(clx *cli.Context) (err error) {
 
 	// Run macaron
 	m := macaron.Classic()
-	m.Use(macaron.Renderer())
+	funcMap := []template.FuncMap{map[string]interface{}{
+		"Spacify": utils.Spacify,
+	}}
+
+	m.Use(macaron.Renderer(macaron.RenderOptions{
+		Funcs: funcMap,
+	}))
 
 	// Web routes
 	m.Get("/", routes.HomepageHandler)
