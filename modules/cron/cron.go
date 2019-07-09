@@ -138,7 +138,7 @@ func checkRepositoriesCron() {
 	var err error
 
 	var wg sync.WaitGroup
-	var workers = make(chan struct{}, settings.Config.MaxCheckWorkers)
+	var workers = make(chan struct{}, settings.Config.Limits.MaxCheckWorkers)
 	for _, proj := range settings.ActiveProjs.Projects {
 		wg.Add(1)
 		workers <- struct{}{}

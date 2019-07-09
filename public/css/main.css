@@ -32,7 +32,12 @@ p {
   text-align: center;
 }
 
+a {
+  color: inherit;
+}
+
 a:focus {
+  background-color: #ffbf47;
   outline: 2.5pt solid #ffbf47;
 }
 

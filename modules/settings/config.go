@@ -4,9 +4,11 @@
 package settings
 
 import (
+	"fmt"
 	"github.com/BurntSushi/toml"
 	"log"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -23,20 +25,28 @@ var (
 // of the learning bot. This excludes the ActiveProjects
 // configuration.
 type Configuration struct {
-	SiteTitle               string          `toml:"site_title"`
-	SiteURL                 string          `toml:"site_url"`
-	BotPrivateToken         string          `toml:"bot_private_access_token"`
-	CheckstyleJarPath       string          `toml:"checkstyle_jar_path"`
-	CheckstyleConfigPath    string          `toml:"checkstyle_config_path"`
-	GitLabInstanceURL       string          `toml:"gitlab_instance_url"`
-	DatabaseConfiguration   DBConfiguration `toml:"database_configuration"`
-	LMSTitle                string          `toml:"lms_title,omitempty"`
-	LMSURL                  string          `toml:"lms_url,omitempty"`
-	CheckActiveRepoCron     string          `toml:"check_active_repositories_cron"`
-	MaxCheckWorkers         int             `toml:"max_check_workers"`
-	TimezoneName            string          `toml:"timezone"`
-	Timezone                *time.Location  `toml:"-"`
-	CodeSnippetIncludeLines int             `toml:"code_snippet_include_previous_lines"`
+	SiteTitle               string              `toml:"site_title"`
+	SiteURL                 string              `toml:"site_url"`
+	SitePort                string              `toml:"-"`
+	BotPrivateToken         string              `toml:"bot_private_access_token"`
+	CheckstyleJarPath       string              `toml:"checkstyle_jar_path"`
+	CheckstyleConfigPath    string              `toml:"checkstyle_config_path"`
+	GitLabInstanceURL       string              `toml:"gitlab_instance_url"`
+	DatabaseConfiguration   DBConfiguration     `toml:"database"`
+	LMSTitle                string              `toml:"lms_title,omitempty"`
+	LMSURL                  string              `toml:"lms_url,omitempty"`
+	CheckActiveRepoCron     string              `toml:"check_active_repositories_cron"`
+	TimezoneName            string              `toml:"timezone"`
+	Timezone                *time.Location      `toml:"-"`
+	CodeSnippetIncludeLines int                 `toml:"code_snippet_include_previous_lines"`
+	Limits                  LimitsConfiguration `toml:"limits"`
+}
+
+// LimitsConfiguration represents limits for report items and concurrency.
+type LimitsConfiguration struct {
+	MaxCheckWorkers          int `toml:"max_check_workers"`
+	MaxIssuesPerReport       int `toml:"max_issues_per_report"`
+	MaxIssuePerTypePerReport int `toml:"max_issues_per_type_per_report"`
 }
 
 // DBType represents the database driver type, such as MySQL or SQLite.
@@ -75,9 +85,13 @@ func NewConfiguration(token string, siteURL string, instance string, checkstyleJ
 		LMSTitle:                "Vision",
 		LMSURL:                  "https://vision.hw.ac.uk",
 		CheckActiveRepoCron:     "@every 1h45m",
-		MaxCheckWorkers:         5,
 		TimezoneName:            "Europe/London",
 		CodeSnippetIncludeLines: 3,
+		Limits: LimitsConfiguration{
+			MaxCheckWorkers:          5,
+			MaxIssuesPerReport:       -1,
+			MaxIssuePerTypePerReport: -1,
+		},
 	}
 }
 
@@ -99,6 +113,12 @@ func LoadConfig() {
 	Config.Timezone, err = time.LoadLocation(Config.TimezoneName)
 	if err != nil {
 		log.Panicf("Invalid timezone in config: %s", err)
+	}
+	url := strings.Split(Config.SiteURL, ":")
+	if len(url) > 1 {
+		Config.SitePort = fmt.Sprintf(":%s", url[2])
+	} else {
+		Config.SitePort = ":4000"
 	}
 
 	LoadActiveProjs(false)

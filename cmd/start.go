@@ -4,6 +4,8 @@ import (
 	"github.com/urfave/cli"
 	macaron "gopkg.in/macaron.v1"
 	"html/template"
+	"log"
+	"net/http"
 
 	"gitlab.com/gitedulab/learning-bot/models"
 	"gitlab.com/gitedulab/learning-bot/modules/cron"
@@ -50,6 +52,7 @@ func start(clx *cli.Context) (err error) {
 		m.Get("/status/:sha.json", routes.APIGetReportStatusHandler)
 	})
 
-	m.Run()
+	log.Printf("Starting web server on port %s\n", settings.Config.SitePort)
+	log.Fatal(http.ListenAndServe(settings.Config.SitePort, m))
 	return nil
 }
