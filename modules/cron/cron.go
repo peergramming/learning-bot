@@ -59,7 +59,7 @@ func getRepoArchive(git *gitlab.Client, project string, sha string) ([]byte, err
 // checkGitLabProjectExists returns whether a GitLab project exists and accessible.
 func checkGitLabProjectExists(git *gitlab.Client, project string) (err error) {
 	_, resp, err := git.Projects.GetProject(project, &gitlab.GetProjectOptions{})
-	if err != nil && resp.StatusCode != 200 {
+	if err != nil && resp != nil && resp.StatusCode != 200 {
 		return fmt.Errorf("Cannot access GitLab project, returned status code: %s", resp.Status)
 	} else if err != nil {
 		return err

@@ -40,7 +40,7 @@ func GetIssues(checkstyleOutput string, commitSHA string, path string, reportID 
 				issue.SourceSnippet = getSnippet(issue.FilePath, issue.LineNumber, issue.ColumnNumber)
 				issue.FilePath = strings.Split(issue.FilePath, path)[1] // remove /tmp/x from report
 				mtx.Lock()                                              // prevent race condition
-				issues = append(issues, issue) // Note: Order not preserved
+				issues = append(issues, issue)                          // Note: Order not preserved
 				mtx.Unlock()
 			}
 		}()
