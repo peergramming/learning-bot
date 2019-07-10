@@ -26,6 +26,7 @@ The following packages must be installed on your system.
 
 - git
 - Go *(tested with 1.12)*
+- GNU make
 - OpenJDK Runtime Environment *(tested with 1.8.0)*
 - unzip *(Unix utility)*
 - checkstyle *(jar, tested with 8.22)*
@@ -36,29 +37,16 @@ database functionality.
 
 ## Installation from source
 
-### Downloading
-
-Since this is currently a private repository, using `go get` will not
-suffice. Make sure you have configured git to authenticate with GitLab
-via ssh.
-
 ```
-$ mkdir -p ~/go/gitlab.com/gitedulab
-$ git clone git@gitlab.com:gitedulab/learning-bot.git ~/go/gitlab.com/gitedulab/learning-bot
-```
-
-### Building
-
-```
-$ cd ~/go/gitlab.com/gitedulab/learning-bot
-$ go get -u
-$ go build
+$ git clone git@gitlab.com:gitedulab/learning-bot.git
+$ cd learning-bot
+$ make clean all
 ```
 
 **Note:** You have to run the binary in the directory, so the program
 is able to find web files required to render the web pages.
 
-### Configuring and running
+## Configuring and running
 
 Before running the web server, the program has to be configured using
 the `config` command-line option.
@@ -78,6 +66,15 @@ edited, if required). And the web server (and bot) can start.
 $ ./learning-bot run
 ```
 
+## Adding projects to check
+
+The bot will not check any projects by default, but it can be added using the interactive
+tool `learning-bot manage`. And this can be automatic with scripts by using the add and
+remove subcommands: `learning-bot manage [add/remove] [project]`.  
+
+The project consists of the user and project name separated with a slash, such as
+`humaid/dsa-cw-1`.
+
 ## Further configuration
 
 There are some default configuration values which aren't setup in the wizard. Here
@@ -89,19 +86,22 @@ is the documentation for `config.toml`.
 - `checkstyle_jar_path`: Path for the checkstyle JAR file, must be downloaded separately.
 - `checkstyle_config_path`: Path for the checkstyle configuration file, provided by the project.
 - `gitlab_instance_url`: The URL of the GitLab instance for the API, links and integration.
+- `gitlab_skip_verify_check`: Skip verification with authenting with GitLab API via HTTPS.
 - `lms_title`: Optional LMS link title.
 - `lms_url`: Optional LMS link URL.
 - `check_active_repositories_cron`: Cron job schedule interval. Learn more about format [here](https://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules).
-- `max_check_workers`: Maximum number of concurrent workers checking repositories.
 - `timezone`: Timezone used for report and database.
 - `code_snippet_include_previous_lines`: Maximum number of lines to include before troubled line in report code snippet.
-- `database_configuration`: Database configuration field.
+- `database`: Database configuration field.
   - `type`: Driver type; 0 for SQLite, 1 for MySQL.
   - `host`: [MySQL] The host of the MySQL server.
   - `name`: [MySQL] The name of the MySQL user.
   - `ssl_mode`: [MySQL] The SSL/TLS mode of the MySQL connection.
   - `path`: [SQLite] The path for the SQLite database file.
-
+- `limits`: Limitations configuration field.
+  - `max_check_workers`: Maximum number of concurrent workers checking repositories.
+  - `max_issues_per_report`: Maximum number of issues per report (-1 for no limit).
+  - `max_issues_per_type_per_report`: Maximum number of issues per type in a report (-1 for no limit).
 
 ## Installing the Project Service (GitLab)
 
