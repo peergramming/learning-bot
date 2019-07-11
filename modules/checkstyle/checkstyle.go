@@ -26,6 +26,7 @@ func GetIssues(checkstyleOutput string, commitSHA string, path string, reportID 
 	var wg sync.WaitGroup
 	var mtx sync.Mutex
 	var workers = make(chan struct{}, 3)
+	var issueTypeCount = make(map[string]int)
 	for _, line := range lines {
 		wg.Add(1)
 		workers <- struct{}{}
@@ -40,7 +41,18 @@ func GetIssues(checkstyleOutput string, commitSHA string, path string, reportID 
 				issue.SourceSnippet = getSnippet(issue.FilePath, issue.LineNumber, issue.ColumnNumber)
 				issue.FilePath = strings.Split(issue.FilePath, path)[1] // remove /tmp/x from report
 				mtx.Lock()                                              // prevent race condition
-				issues = append(issues, issue)                          // Note: Order not preserved
+				if settings.Config.Limits.MaxIssuesPerReport != -1 &&
+					len(issues) >= settings.Config.Limits.MaxIssuesPerReport {
+					mtx.Unlock()
+					return
+				}
+				if settings.Config.Limits.MaxIssuePerTypePerReport != -1 &&
+					issueTypeCount[issue.CheckName] >= settings.Config.Limits.MaxIssuePerTypePerReport {
+					mtx.Unlock()
+					return
+				}
+				issueTypeCount[issue.CheckName]++
+				issues = append(issues, issue) // Note: Order not preserved
 				mtx.Unlock()
 			}
 		}(line)
