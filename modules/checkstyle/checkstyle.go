@@ -29,7 +29,7 @@ func GetIssues(checkstyleOutput string, commitSHA string, path string, reportID 
 	for _, line := range lines {
 		wg.Add(1)
 		workers <- struct{}{}
-		go func() {
+		go func(line string) {
 			defer func() {
 				wg.Done()
 				<-workers
@@ -43,7 +43,7 @@ func GetIssues(checkstyleOutput string, commitSHA string, path string, reportID 
 				issues = append(issues, issue)                          // Note: Order not preserved
 				mtx.Unlock()
 			}
-		}()
+		}(line)
 	}
 	wg.Wait()
 	return issues

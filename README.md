@@ -37,6 +37,7 @@ database functionality.
 
 ## Installation from source
 
+### Downloading
 ```
 $ git clone git@gitlab.com:gitedulab/learning-bot.git
 $ cd learning-bot
@@ -46,7 +47,7 @@ $ make clean all
 **Note:** You have to run the binary in the directory, so the program
 is able to find web files required to render the web pages.
 
-## Configuring and running
+### Configuring
 
 Before running the web server, the program has to be configured using
 the `config` command-line option.
@@ -60,20 +61,32 @@ file. You'll have to specify the SQL driver/server, checkstyle jar and configura
 location, bot private token, and so on...  
 
 Once configured, the program would generate a `config.toml` file (which can be lated
-edited, if required). And the web server (and bot) can start.
+edited, if required).
+
+#### Adding projects to check
+
+The bot will not check any projects by default, but it can be added using the interactive
+`manage` tool. This can be automated with scripts by using the add and
+remove subcommands:
+
+```
+$ learning-bot manage [add/remove] [project]
+```
+
+The project consists of the user and project name separated with a slash, such as
+`humaid/dsa-cw-1`. The projects list is stored in the `active-projects.toml` file.
+
+### Running the bot
+
+The bot can be run using the following command, this would also start a web server 
+to display reports (unless if you start it with `--no-web`).
 
 ```
 $ ./learning-bot run
 ```
 
-## Adding projects to check
-
-The bot will not check any projects by default, but it can be added using the interactive
-tool `learning-bot manage`. And this can be automatic with scripts by using the add and
-remove subcommands: `learning-bot manage [add/remove] [project]`.  
-
-The project consists of the user and project name separated with a slash, such as
-`humaid/dsa-cw-1`.
+By default, the bot would automatically check all active repositories at start, and
+it would repeat on interval as configured.
 
 ## Further configuration
 
@@ -103,18 +116,6 @@ is the documentation for `config.toml`.
   - `max_issues_per_report`: Maximum number of issues per report (-1 for no limit).
   - `max_issues_per_type_per_report`: Maximum number of issues per type in a report (-1 for no limit).
 
-## Installing the Project Service (GitLab)
-
-The project service can be installed by coping the file `learning_bot_service.rb` in
-the `project_services_gitlab` folder of this project to the GitLab-CE source at
-`app/models/project_services/[learning_bot_service.rb]`.  
-
-After copying the file, you will have to change the `learning_bot_service_url` constant
-to be the bot's instance URL (including port, if non-default).  
-
-Then make sure to include the service models in `app/models/project.rb` and
-`spec/models/project_spec.rb` to make sure that GitLab recognises and loads
-the new service.
 
 ## Development board
 
