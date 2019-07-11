@@ -192,8 +192,10 @@ func checkRepositoriesCron() {
 
 			// Check whether report is already generated for latest commit
 			latestCommit := commits[0]
-			if _, ok := repo.GetReport(latestCommit.ID); ok {
-				log.Panicln("Report is already latest")
+			if rep, ok := repo.GetReport(latestCommit.ID); ok &&
+				rep.Status == models.Complete {
+				log.Println("Report is already latest")
+				return
 			}
 
 			// Create a GitLab issue, if doesn't exist
@@ -245,6 +247,7 @@ func checkRepositoriesCron() {
 
 			err = runCheckstyle(path, report, newPath, latestCommit.ID)
 			if err != nil {
+				report.Status = models.Failed
 				log.Panicf("Unable to run checkstyle: %s\n", err)
 			}
 			reports := append(repo.Reports, report)

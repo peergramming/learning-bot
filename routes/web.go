@@ -45,8 +45,6 @@ func ReportPageHandler(ctx *macaron.Context) {
 	commit := ctx.Params("sha")
 
 	repo, err := models.GetRepo(project)
-	log.Println(repo)
-	fmt.Println(commit)
 
 	if err != nil && err.Error() == "Repository does not exist" {
 		ctx.Error(404, err.Error())
@@ -70,7 +68,6 @@ func ReportPageHandler(ctx *macaron.Context) {
 	ctx.Data["CommitShort"] = commit[:8]
 	ctx.Data["ReportGenDate"] = time.Unix(rep.CreatedUnix, 0).Format("Jan 2, 2006 at 3:04 PM")
 	ctx.Data["Report"] = rep
-	//ctx.Data["ReportGenDate"] = rep.Created
 
 	ctx.HTML(200, "report")
 }
