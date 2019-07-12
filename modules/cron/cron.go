@@ -157,8 +157,8 @@ func checkRepositoriesCron() {
 			// Benchmarking
 			start := time.Now()
 			defer func(path string, start time.Time) {
-				elapsed := time.Since(start)
-				log.Printf("Cron: %s: Done checking project (%s)\n", path, elapsed)
+				log.Printf("Cron: %s: Done checking project (%s)\n", path,
+					time.Since(start))
 			}(path, start)
 
 			log.Printf("Cron: %s: Checking project...\n", path)
@@ -186,13 +186,14 @@ func checkRepositoriesCron() {
 			// Load project's commits
 			var commits []*gitlab.Commit
 			commits, err = getCommits(git, path)
-			if err != nil {
-				log.Panicln(err)
+			if checkCronErr(err, path, "") {
+				return
 			}
 
 			// Check whether report is already generated for latest commit
-			latestCommit := commits[0]
-			if rep, ok := repo.GetReport(latestCommit.ID); ok &&
+			latestCommit := commits[0].ID
+			_ = commits
+			if rep, ok := repo.GetReport(latestCommit); ok &&
 				rep.Status == models.Complete {
 				log.Println("Report is already latest")
 				return
@@ -216,9 +217,9 @@ func checkRepositoriesCron() {
 
 			// Create a temporary directory
 			tempDir, err := ioutil.TempDir("", fmt.Sprintf("learning-bot-%s-%s-%s", proj.Namespace, proj.Project,
-				latestCommit.ID[6:]))
-			if err != nil {
-				log.Panicf("Unable to create temporary directory (full disk?): %s\n", err)
+				latestCommit[6:]))
+			if checkCronErr(err, path, "Unable to create temporary directory (full disk?)") {
+				return
 			}
 			defer func(path string) { // Defer the deletion of the temporary directory
 				exec.Command("rm", "-rf", path).Output()
@@ -226,29 +227,29 @@ func checkRepositoriesCron() {
 
 			// Download archive as zip
 			var archPath string
-			archPath, err = downloadArchiveZip(git, path, latestCommit.ID, tempDir)
-			if err != nil {
-				log.Panicf("Cannot download zip archive: %s\n", err)
+			archPath, err = downloadArchiveZip(git, path, latestCommit, tempDir)
+			if checkCronErr(err, path, "Cannot download zip archive") {
+				return
 			}
 
 			// Unzip project archive
 			var newPath string
-			newPath, err = unzipProjectArchive(&proj, tempDir, archPath, latestCommit.ID)
-			if err != nil {
-				log.Panicf("Unable to unzip project: %s\n", err)
+			newPath, err = unzipProjectArchive(&proj, tempDir, archPath, latestCommit)
+			if checkCronErr(err, path, "Unable to unzip project") {
+				return
 			}
 
 			// Run checkstyle
 			var report *models.Report
-			report, err = createReport(git, path, latestCommit.ID)
-			if err != nil {
-				log.Panicf("Unable to create report in DB: %s\n", err)
+			report, err = createReport(git, path, latestCommit)
+			if checkCronErr(err, path, "Unable to create report in DB") {
+				return
 			}
 
-			err = runCheckstyle(path, report, newPath, latestCommit.ID)
-			if err != nil {
+			err = runCheckstyle(path, report, newPath, latestCommit)
+			if checkCronErr(err, path, "Unable to run checkstyle") {
 				report.Status = models.Failed
-				log.Panicf("Unable to run checkstyle: %s\n", err)
+				return
 			}
 			reports := append(repo.Reports, report)
 
@@ -257,20 +258,33 @@ func checkRepositoriesCron() {
 				<-createIssueMutex
 				close(createIssueMutex)
 				err = updateIssue(git, repo, report)
-				if err != nil {
-					log.Panicf("Cannot update issue: %s\n", err)
+				if checkCronErr(err, path, "Cannot update issues") {
+					return
 				}
 			}()
 
 			// Update repo in DB
 			err = models.UpdateRepositoryReports(repo, reports)
-			if err != nil {
-				log.Panicf("Cannot update repository reports in db: %s\n", err)
+			if checkCronErr(err, path, "Unable to create repository reports in DB") {
+				return
 			}
 		}(proj, &wg)
 
 	}
 	wg.Wait() // wait for all concurrent processes to finish
+	close(workers)
 	log.Println("Cron: End of checking active repositories")
 	<-checkRepoLimit
+}
+
+func checkCronErr(err error, project string, desc string) bool {
+	if err != nil {
+		if len(desc) > 0 {
+			log.Printf("Cron: %s: %s\n", desc, err)
+		} else {
+			log.Printf("Cron: %s\n", err)
+		}
+		return true
+	}
+	return false
 }

@@ -58,6 +58,7 @@ func GetIssues(checkstyleOutput string, commitSHA string, path string, reportID 
 		}(line)
 	}
 	wg.Wait()
+	close(workers)
 	return issues
 }
 
