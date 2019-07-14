@@ -17,7 +17,7 @@ link to the report. The report would contain a list of all the issues
 in the source code, each of which would give a preview of the code and
 a suggestion on how to fix it.
 
-Alternatively, a CI-based addon would be built into GitLab which would
+Alternatively, a CI-based add-on would be built into GitLab which would
 add a badge to each commit, which would redirect to the report page.
 
 ## Requirements
@@ -60,7 +60,7 @@ The program will guide you through the process on creating a new configuration
 file. You'll have to specify the SQL driver/server, checkstyle jar and configuration
 location, bot private token, and so on...  
 
-Once configured, the program would generate a `config.toml` file (which can be lated
+Once configured, the program would generate a `config.toml` file (which can be later
 edited, if required).
 
 #### Adding projects to check
@@ -99,7 +99,7 @@ is the documentation for `config.toml`.
 - `checkstyle_jar_path`: Path for the checkstyle JAR file, must be downloaded separately.
 - `checkstyle_config_path`: Path for the checkstyle configuration file, provided by the project.
 - `gitlab_instance_url`: The URL of the GitLab instance for the API, links and integration.
-- `gitlab_skip_verify_check`: Skip verification with authenting with GitLab API via HTTPS.
+- `gitlab_skip_verify_check`: Skip verification with authenticating with GitLab API via HTTPS.
 - `lms_title`: Optional LMS link title.
 - `lms_url`: Optional LMS link URL.
 - `check_active_repositories_cron`: Cron job schedule interval. Learn more about format [here](https://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules).
