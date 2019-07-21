@@ -64,11 +64,11 @@ var CmdManage = cli.Command{
 
 func getProjectFromString(path string) (project *settings.Project, err error) {
 	if path == "" {
-		return nil, fmt.Errorf("Invalid project path\n")
+		return nil, fmt.Errorf("invalid project path")
 	}
 	paths := strings.Split(path, "/")
 	if len(paths) != 2 {
-		return nil, fmt.Errorf("Invalid path, got %d paths, wanted 2!\n", len(paths))
+		return nil, fmt.Errorf("invalid path, got %d paths, wanted 2", len(paths))
 	}
 	return &settings.Project{Namespace: paths[0], Project: paths[1]}, nil
 }
