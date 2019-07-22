@@ -16,6 +16,14 @@ var (
 	tables []interface{}
 )
 
+func init() {
+	tables = append(tables,
+		new(Repository),
+		new(Report),
+		new(Issue),
+	)
+}
+
 // SetupEngine sets up the xorm engine according to the database configuration,
 // and syncs the schema.
 func SetupEngine() *xorm.Engine {
@@ -36,14 +44,21 @@ func SetupEngine() *xorm.Engine {
 		log.Fatal("Unable to load database! ", err)
 	}
 
-	tables = append(tables,
-		new(Repository),
-		new(Report),
-		new(Issue),
-	)
 	engine.TZLocation = settings.Config.Timezone
 	engine.SetMapper(core.GonicMapper{})
 
 	engine.Sync(tables...)
 	return engine
+}
+
+func SetupTestEngine() {
+	var err error
+	testDBPath := "test.db"
+	os.Remove(testDBPath)
+	engine, err = xorm.NewEngine("sqlite3", testDBPath)
+	if err != nil {
+		log.Fatal("Unable to create test database! ", err)
+	}
+	engine.SetMapper(core.GonicMapper{})
+	engine.Sync(tables...)
 }

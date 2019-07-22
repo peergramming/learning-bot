@@ -25,22 +25,23 @@ var (
 // of the learning bot. This excludes the ActiveProjects
 // configuration.
 type Configuration struct {
-	SiteTitle                string              `toml:"site_title"`
-	SiteURL                  string              `toml:"site_url"`
-	SitePort                 string              `toml:"-"`
-	BotPrivateToken          string              `toml:"bot_private_access_token"`
-	CheckstyleJarPath        string              `toml:"checkstyle_jar_path"`
-	CheckstyleConfigPath     string              `toml:"checkstyle_config_path"`
-	GitLabInstanceURL        string              `toml:"gitlab_instance_url"`
-	GitLabInsecureSkipVerify bool                `toml:"gitlab_insecure_skip_verify"`
-	DatabaseConfiguration    DBConfiguration     `toml:"database"`
-	LMSTitle                 string              `toml:"lms_title,omitempty"`
-	LMSURL                   string              `toml:"lms_url,omitempty"`
-	CheckActiveRepoCron      string              `toml:"check_active_repositories_cron"`
-	TimezoneName             string              `toml:"timezone"`
-	Timezone                 *time.Location      `toml:"-"`
-	CodeSnippetIncludeLines  int                 `toml:"code_snippet_include_previous_lines"`
-	Limits                   LimitsConfiguration `toml:"limits"`
+	SiteTitle                string                   `toml:"site_title"`
+	SiteURL                  string                   `toml:"site_url"`
+	SitePort                 string                   `toml:"-"`
+	BotPrivateToken          string                   `toml:"bot_private_access_token"`
+	CheckstyleJarPath        string                   `toml:"checkstyle_jar_path"`
+	CheckstyleConfigPath     string                   `toml:"checkstyle_config_path"`
+	GitLabInstanceURL        string                   `toml:"gitlab_instance_url"`
+	GitLabInsecureSkipVerify bool                     `toml:"gitlab_insecure_skip_verify"`
+	DatabaseConfiguration    DBConfiguration          `toml:"database"`
+	LMSTitle                 string                   `toml:"lms_title,omitempty"`
+	LMSURL                   string                   `toml:"lms_url,omitempty"`
+	CheckActiveRepoCron      string                   `toml:"check_active_repositories_cron"`
+	TimezoneName             string                   `toml:"timezone"`
+	Timezone                 *time.Location           `toml:"-"`
+	CodeSnippetIncludeLines  int                      `toml:"code_snippet_include_previous_lines"`
+	Limits                   LimitsConfiguration      `toml:"limits"`
+	GitLabCustomisation      GitLabIssueCustomisation `toml:"gitlab_messages"`
 }
 
 // LimitsConfiguration represents limits for report items and concurrency.
@@ -48,6 +49,13 @@ type LimitsConfiguration struct {
 	MaxCheckWorkers          int `toml:"max_check_workers"`
 	MaxIssuesPerReport       int `toml:"max_issues_per_report"`
 	MaxIssuePerTypePerReport int `toml:"max_issues_per_type_per_report"`
+}
+
+// GitLabIssueCustomisation represents the
+type GitLabIssueCustomisation struct {
+	IssueTitle     string `toml:"gitlab_issue_title"`
+	GeneratingBody string `toml:"gitlab_issue_generating_body"`
+	CompleteBody   string `toml:"gitlab_issue_complete_body"`
 }
 
 // DBType represents the database driver type, such as MySQL or SQLite.
@@ -93,6 +101,21 @@ func NewConfiguration(token string, siteURL string, instance string, checkstyleJ
 			MaxCheckWorkers:          5,
 			MaxIssuesPerReport:       -1,
 			MaxIssuePerTypePerReport: -1,
+		},
+		GitLabCustomisation: GitLabIssueCustomisation{
+			IssueTitle: "[$site_title] Your code report 📊",
+			GeneratingBody: `Hey @$username!
+
+Your report is currently being generating for $commit.
+
+Sit tight!  
+You can view the progress here:  
+[View Report]($report_link)`,
+			CompleteBody: `Hey @$username!
+
+The report is generated for $commit, and you can view it in the link below!
+
+[View report]($report_link)`,
 		},
 	}
 }

@@ -2,7 +2,6 @@ package models
 
 import (
 	"errors"
-	"github.com/go-xorm/xorm"
 )
 
 // ReportStatus represents the generation status of a report.
@@ -65,34 +64,19 @@ func UpdateReport(r *Report) (err error) {
 	return err
 }
 
-// UpdateRepositoryReports updates the reports of a repository, including issues.
-// This function does not update the report, use UpdateReport() instead.
-func UpdateRepositoryReports(repo *Repository, reports []*Report) (err error) {
+// HasReport returns whether a specific report is in the database.
+func HasReport(repoID string, commit string) bool {
+	has, _ := engine.Get(&Report{RepositoryID: repoID, Commit: commit})
+	return has
+}
+
+// UpdateIssues updates or inserts the issues of a report in the database.
+func UpdateIssues(r *Report) (err error) {
 	sess := engine.NewSession() // transaction
-	defer sess.Close()
 	if err = sess.Begin(); err != nil {
 		return err
 	}
 
-	if _, err = sess.Where("repository_id = ?", repo.RepoID).Delete(new(Report)); err != nil {
-		return err
-	}
-
-	if _, err = sess.Insert(reports); err != nil {
-		return err
-	}
-
-	for _, report := range reports {
-		err = report.updateIssues(sess)
-		if err != nil {
-			return err
-		}
-	}
-
-	return sess.Commit()
-}
-
-func (r *Report) updateIssues(sess *xorm.Session) (err error) {
 	if _, err = sess.Where("report_id = ?", r.ReportID).Delete(new(Issue)); err != nil {
 		return err
 	}
@@ -102,7 +86,7 @@ func (r *Report) updateIssues(sess *xorm.Session) (err error) {
 	if _, err = sess.Insert(r.Issues); err != nil {
 		return err
 	}
-	return nil
+	return sess.Commit()
 }
 
 // LoadIssues loads all issues in a report.
