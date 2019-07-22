@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"gitlab.com/gitedulab/learning-bot/models"
+	"gitlab.com/gitedulab/learning-bot/modules/checkstyle"
 	"gitlab.com/gitedulab/learning-bot/modules/cron"
 	"gitlab.com/gitedulab/learning-bot/modules/settings"
 	"gitlab.com/gitedulab/learning-bot/modules/utils"
@@ -42,7 +43,8 @@ func start(clx *cli.Context) (err error) {
 		// Run macaron
 		m := macaron.Classic()
 		funcMap := []template.FuncMap{map[string]interface{}{
-			"Spacify": utils.Spacify,
+			"Spacify":     utils.Spacify,
+			"CheckExists": checkstyle.DoesCheckExist,
 		}}
 
 		m.Use(macaron.Renderer(macaron.RenderOptions{

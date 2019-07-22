@@ -25,7 +25,7 @@
 <div class="suggestion">
 <p>{{.Description}}</p>
 
-<p><a target="issue" href="/help/{{.CheckName}}">Learn more about this type of issue and how to fix it</a></p>
+{{if CheckExists .CheckName}}<p><a target="issue" href="/help/{{.CheckName}}">Learn more about this type of issue and how to fix it</a></p>{{end}}
 </div>
 
 </div>

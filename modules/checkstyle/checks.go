@@ -80,7 +80,7 @@ doUnconditional();`},
 		Description: "You cannot check equality between two strings using == and != in Java.",
 		Rationale:   "When using == and != to check equality between strings, you are comparing the memory pointer of the string rather than the actual string.",
 		Suggestion:  "Use .equals() to check equality between two strings."},
-	"UnnecessaryParantheses": {Category: "coding",
+	"UnnecessaryParentheses": {Category: "coding",
 		Description: "Unnecessary amount of parentheses are used in a statement or expression.",
 		Rationale:   "The extra amount of parentheses are redundant.",
 		Suggestion:  "Remove the redundant parenthesis from the statement or expression."},
@@ -203,4 +203,10 @@ type CheckDesc struct {
 	Rationale   string
 	Suggestion  string
 	Example     string
+}
+
+// Checks whether a check description exists.
+func DoesCheckExist(check string) bool {
+	_, ok := Checks[check]
+	return ok
 }
