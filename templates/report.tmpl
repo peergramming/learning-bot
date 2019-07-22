@@ -18,16 +18,12 @@
 <div class="file">
 <p class="file-title"><b>{{Spacify .CheckName}}</b>: <a target="_blank" href="{{$.GitLabInst}}/{{$.Project}}/blob/{{$.Commit}}{{.FilePath}}#L{{.LineNumber}}">{{.FilePath}}{{if .LineNumber}}:{{.LineNumber}}{{if.ColumnNumber}}:{{.ColumnNumber}}{{end}}{{end}}</a></p>
 </div>
-<div class="code-snippet">
-<pre><code class="java">{{.SourceSnippet}}</code></pre>
-
-</div>
+{{if .SourceSnippet}}<div class="code-snippet">
+<pre><code class="java">{{.SourceSnippet}}</code></pre></div>{{end}}
 <div class="suggestion">
 <p>{{.Description}}</p>
-
 {{if CheckExists .CheckName}}<p><a target="issue" href="/help/{{.CheckName}}">Learn more about this type of issue and how to fix it</a></p>{{end}}
 </div>
-
 </div>
 <hr>
 {{end}}
