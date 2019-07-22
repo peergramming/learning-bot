@@ -26,7 +26,6 @@ var (
 	defaultDriver         = "sqlite"
 	defaultDBPath         = "./data.db"
 	defaultDBHost         = "localhost:3306"
-	defaultDBSSLMode      = "skip-verify"
 )
 
 func runConfig(clx *cli.Context) error {
@@ -47,7 +46,7 @@ func runConfig(clx *cli.Context) error {
 		instance = defaultInstance
 	}
 
-	fmt.Printf("Enter your bot site URL (incl. port): ")
+	fmt.Printf("Enter your bot site URL (incl. protocol and port): ")
 	var siteURL string
 	fmt.Scanln(&siteURL)
 
@@ -69,7 +68,7 @@ func runConfig(clx *cli.Context) error {
 	var dbConfig settings.DBConfiguration
 
 	fmt.Println("This program supports the following database drivers:")
-	fmt.Println("mysql, sqlite")
+	fmt.Println("mysql, sqlite, postgres")
 	fmt.Printf("Select a database driver: [%s] ", defaultDriver)
 	dbDriver := scanWithDefault(defaultDriver)
 
@@ -79,6 +78,8 @@ func runConfig(clx *cli.Context) error {
 		dbConfig.Type = settings.SQLite
 	case "mysql":
 		dbConfig.Type = settings.MySQL
+	case "postgres":
+		dbConfig.Type = settings.PostgreSQL
 	default:
 		dbConfig.Type = settings.SQLite
 	}
@@ -86,20 +87,27 @@ func runConfig(clx *cli.Context) error {
 	if dbDriverType == settings.SQLite {
 		fmt.Printf("Enter a path for the SQLite file: [%s] ", defaultDBPath)
 		dbConfig.Path = scanWithDefault(defaultDBPath)
-	} else if dbDriverType == settings.MySQL {
-		fmt.Printf("Enter the host of the MySQL server (incl. port): [%s] ", defaultDBHost)
+	} else if dbDriverType == settings.MySQL || dbDriverType == settings.PostgreSQL {
+		fmt.Printf("Enter the host of the SQL server (incl. port): [%s] ", defaultDBHost)
 		dbConfig.Host = scanWithDefault(defaultDBHost)
 
-		fmt.Printf("Enter the database name to use for the MySQL server: ")
+		fmt.Printf("Enter the database name to use for the SQL server: ")
 		dbConfig.Name = scanWithDefault("")
 
-		fmt.Printf("Enter the username to use for the MySQL server: ")
+		fmt.Printf("Enter the username to use for the SQL server: ")
 		dbConfig.User = scanWithDefault("")
-
-		fmt.Println("Select the TLS mode to use, the following values are valid:")
-		fmt.Println("true, false, skip-verify, preferred, <name>")
-		fmt.Printf("Enter the TLS mode to use for the MySQL server: [%s] ", defaultDBSSLMode)
-		dbConfig.SSLMode = scanWithDefault(defaultDBSSLMode)
+		var defaultSSLMode string
+		if dbDriverType == settings.MySQL {
+			fmt.Println("Select the TLS mode to use, the following values are valid:")
+			fmt.Println("true, false, skip-verify, preferred, <name>")
+			defaultSSLMode = "skip-verify"
+		} else if dbDriverType == settings.PostgreSQL {
+			fmt.Println("Select the SSL mode to use, the following values are valid:")
+			fmt.Println("disable, require, verify-ca, verify-full")
+			defaultSSLMode = "require"
+		}
+		fmt.Printf("Enter the TLS mode to use for the SQL server: [%s] ", defaultSSLMode)
+		dbConfig.SSLMode = scanWithDefault(defaultSSLMode)
 	}
 
 	// Generate struct configuration

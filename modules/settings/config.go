@@ -66,6 +66,7 @@ const (
 	SQLite = iota
 	// MySQL is a standard SQL driver.
 	MySQL
+	PostgreSQL
 )
 
 // DBConfiguration represents a database configuration, including whether

@@ -38,6 +38,11 @@ func SetupEngine() *xorm.Engine {
 			dbConf.User, os.Getenv("MYSQL_PASSWORD"),
 			dbConf.Host, dbConf.Name, dbConf.SSLMode)
 		engine, err = xorm.NewEngine("mysql", dbAddr)
+	case settings.PostgreSQL:
+		dbAddr := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=%s",
+			dbConf.User, os.Getenv("POSTGRES_PASSWORD"),
+			dbConf.Host, dbConf.Name, dbConf.SSLMode)
+		engine, err = xorm.NewEngine("postgres", dbAddr)
 	}
 
 	if err != nil {
