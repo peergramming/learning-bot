@@ -1,8 +1,8 @@
 {{template "base/head" .}}
 <div class="content">
 <h2>Report of <a href="{{.GitLabInst}}/{{.Project}}">{{.Project}}</a></h2>
-{{if .IsOldReport}}<div class="warning-banner banner">
-<p><b>Notice:</b> This is a report based on an old version of your code!
+{{if .IsOldReport}}<div class="alert alert-red">
+<p><b>Notice:</b> This is a report based on an old version of your code!</p>
 </div>{{end}}
 <div class="meta">
 <p>Commit: <a href="{{.GitLabInst}}/{{.Project}}/commit/{{.Commit}}">{{.CommitShort}}</a></p>
@@ -13,6 +13,10 @@
 {{ else if eq .Report.Status 2}}
 <p><b>Whoops!</b> I am having trouble generating a report for this commit! Ask for help if this keeps happening.</p>
 {{else}}
+{{if .ShowSurvey}}<div class="alert alert-green">
+<p class="alert-title">{{.SurveyTitle}}</p>
+<p>{{.SurveyMessage}}</p>
+<a class="btn" href="{{.SurveyURL}}" target="_blank">Start survey</a></div>{{end}}
 {{range .Report.Issues}}
 <div class="issue-card">
 <div class="file">

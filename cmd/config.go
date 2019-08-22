@@ -108,6 +108,13 @@ func runConfig(clx *cli.Context) error {
 		}
 		fmt.Printf("Enter the TLS mode to use for the SQL server: [%s] ", defaultSSLMode)
 		dbConfig.SSLMode = scanWithDefault(defaultSSLMode)
+		var envPassword string
+		if dbDriverType == settings.MySQL {
+			envPassword = "MYSQL_PASSWORD"
+		} else if dbDriverType == settings.PostgreSQL {
+			envPassword = "POSTGRESQL_PASSWORD"
+		}
+		fmt.Printf("The SQL password must be set in the '%s' environment variable\n", envPassword)
 	}
 
 	// Generate struct configuration

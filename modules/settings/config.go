@@ -41,7 +41,8 @@ type Configuration struct {
 	Timezone                 *time.Location           `toml:"-"`
 	CodeSnippetIncludeLines  int                      `toml:"code_snippet_include_previous_lines"`
 	Limits                   LimitsConfiguration      `toml:"limits"`
-	GitLabCustomisation      GitLabIssueCustomisation `toml:"gitlab_messages"`
+	GitLabCustomisation      GitLabIssueCustomisation `toml:"gitlab_issue"`
+	Survey                   SurveyConfiguration      `toml:"survey"`
 }
 
 // LimitsConfiguration represents limits for report items and concurrency.
@@ -51,11 +52,21 @@ type LimitsConfiguration struct {
 	MaxIssuePerTypePerReport int `toml:"max_issues_per_type_per_report"`
 }
 
-// GitLabIssueCustomisation represents the
+// GitLabIssueCustomisation represents the customisation configuration
+// for generated GitLab issues.
 type GitLabIssueCustomisation struct {
-	IssueTitle     string `toml:"gitlab_issue_title"`
-	GeneratingBody string `toml:"gitlab_issue_generating_body"`
-	CompleteBody   string `toml:"gitlab_issue_complete_body"`
+	IssueTitle     string `toml:"title"`
+	GeneratingBody string `toml:"generating_body"`
+	CompleteBody   string `toml:"complete_body"`
+}
+
+// SurveyConfiguration represents the configuration and customisation
+// of the surveying function.
+type SurveyConfiguration struct {
+	ShowSurvey bool   `toml:"show_survey"`
+	Title      string `toml:"title"`
+	Message    string `toml:"message"`
+	SurveyURL  string `toml:"ext_url"`
 }
 
 // DBType represents the database driver type, such as MySQL or SQLite.
@@ -117,6 +128,12 @@ You can view the progress here:
 The report is generated for $commit, and you can view it in the link below!
 
 [View report]($report_link)`,
+		},
+		Survey: SurveyConfiguration{
+			ShowSurvey: false,
+			Title:      "Survey",
+			Message:    "We are conducting a study on effectiveness of code repair tools on programming. Please take a minute to fill out our survey.",
+			SurveyURL:  "https://example.com/forms/form-id?user=$username",
 		},
 	}
 }

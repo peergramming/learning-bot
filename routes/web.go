@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"gitlab.com/gitedulab/learning-bot/models"
 	"gitlab.com/gitedulab/learning-bot/modules/checkstyle"
+	"gitlab.com/gitedulab/learning-bot/modules/settings"
 	"gitlab.com/gitedulab/learning-bot/modules/utils"
 	macaron "gopkg.in/macaron.v1"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -63,11 +65,20 @@ func ReportPageHandler(ctx *macaron.Context) {
 	}
 	rep.LoadIssues()
 
+	// Project data
 	ctx.Data["Project"] = project
 	ctx.Data["Commit"] = commit
 	ctx.Data["CommitShort"] = commit[:8]
 	ctx.Data["ReportGenDate"] = time.Unix(rep.CreatedUnix, 0).Format("Jan 2, 2006 at 3:04 PM")
 	ctx.Data["Report"] = rep
+
+	// Survey data
+	surveyConf := &settings.Config.Survey
+	ctx.Data["ShowSurvey"] = surveyConf.ShowSurvey
+	ctx.Data["SurveyTitle"] = surveyConf.Title
+	ctx.Data["SurveyMessage"] = surveyConf.Message
+	ctx.Data["SurveyURL"] = strings.ReplaceAll(surveyConf.SurveyURL, "$username",
+		ctx.Params("namespace"))
 
 	ctx.HTML(200, "report")
 }

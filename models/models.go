@@ -34,11 +34,17 @@ func SetupEngine() *xorm.Engine {
 	case settings.SQLite:
 		engine, err = xorm.NewEngine("sqlite3", settings.Config.DatabaseConfiguration.Path)
 	case settings.MySQL:
+		if len(os.Getenv("MYSQL_PASSWORD")) == 0 {
+			log.Fatal("'MYSQL_PASSWORD' not set in environment!")
+		}
 		dbAddr := fmt.Sprintf("%s:%s@%s/%s?charset=utf8&tls=%s",
 			dbConf.User, os.Getenv("MYSQL_PASSWORD"),
 			dbConf.Host, dbConf.Name, dbConf.SSLMode)
 		engine, err = xorm.NewEngine("mysql", dbAddr)
 	case settings.PostgreSQL:
+		if len(os.Getenv("POSTGRESL_PASSWORD")) == 0 {
+			log.Fatal("'POSTGRESL_PASSWORD' not set in environment!")
+		}
 		dbAddr := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=%s",
 			dbConf.User, os.Getenv("POSTGRES_PASSWORD"),
 			dbConf.Host, dbConf.Name, dbConf.SSLMode)
