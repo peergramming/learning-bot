@@ -28,10 +28,10 @@ func SetupCron() {
 func fillFields(message string, username string,
 	reportLink string, commit string) string {
 	filled := message
-	filled = strings.ReplaceAll(filled, "$username", username)
-	filled = strings.ReplaceAll(filled, "$site_title", settings.Config.SiteTitle)
-	filled = strings.ReplaceAll(filled, "$report_link", reportLink)
-	filled = strings.ReplaceAll(filled, "$commit", commit)
+	filled = strings.Replace(filled, "$username", username, -1)
+	filled = strings.Replace(filled, "$site_title", settings.Config.SiteTitle, -1)
+	filled = strings.Replace(filled, "$report_link", reportLink, -1)
+	filled = strings.Replace(filled, "$commit", commit, -1)
 	return filled
 }
 

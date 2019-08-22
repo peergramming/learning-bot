@@ -77,8 +77,8 @@ func ReportPageHandler(ctx *macaron.Context) {
 	ctx.Data["ShowSurvey"] = surveyConf.ShowSurvey
 	ctx.Data["SurveyTitle"] = surveyConf.Title
 	ctx.Data["SurveyMessage"] = surveyConf.Message
-	ctx.Data["SurveyURL"] = strings.ReplaceAll(surveyConf.SurveyURL, "$username",
-		ctx.Params("namespace"))
+	ctx.Data["SurveyURL"] = strings.Replace(surveyConf.SurveyURL, "$username",
+		ctx.Params("namespace"), -1)
 
 	ctx.HTML(200, "report")
 }
