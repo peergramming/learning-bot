@@ -136,6 +136,10 @@ func ReportPageHandler(ctx *macaron.Context) {
 	ctx.Data["Report"] = rep
 	ctx.Data["SecretKey"] = repo.SecretKey
 
+	if repo.LatestCommit != commit {
+		ctx.Data["IsOldReport"] = true
+	}
+
 	// Survey data
 	surveyConf := &settings.Config.Survey
 	ctx.Data["ShowSurvey"] = surveyConf.ShowSurvey

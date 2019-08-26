@@ -248,6 +248,8 @@ func checkRepositoriesCron() {
 				log.Println("Report is already latest")
 				return
 			}
+			repo.LatestCommit = latestCommit
+			models.UpdateRepo(repo)
 
 			// Create a GitLab issue, if doesn't exist
 			createIssueMutex := make(chan bool)
