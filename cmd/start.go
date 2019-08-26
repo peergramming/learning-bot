@@ -43,8 +43,10 @@ func start(clx *cli.Context) (err error) {
 		// Run macaron
 		m := macaron.Classic()
 		funcMap := []template.FuncMap{map[string]interface{}{
-			"Spacify":     utils.Spacify,
-			"CheckExists": checkstyle.DoesCheckExist,
+			"Spacify":       utils.Spacify,
+			"FormatDate":    utils.FormatDate,
+			"ShortenCommit": utils.ShortenCommit,
+			"CheckExists":   checkstyle.DoesCheckExist,
 		}}
 
 		m.Use(macaron.Renderer(macaron.RenderOptions{
@@ -58,6 +60,7 @@ func start(clx *cli.Context) (err error) {
 		// Project specific routes
 		m.Group("/:namespace/:project", func() {
 			m.Get("/report/:sha", routes.ReportPageHandler)
+			m.Get("/reports/:key", routes.ReportsListPageHandler)
 			m.Get("/status/:sha.json", routes.APIGetReportStatusHandler)
 		})
 

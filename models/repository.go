@@ -8,9 +8,10 @@ import (
 // It keeps track of the issue tracker post and all
 // the reports of that specific repository.
 type Repository struct {
-	RepoID  string    `xorm:"varchar(64) pk"`
-	IssueID int       `xorm:"null"` // stored id of the main issue for checkstyle report
-	Reports []*Report `xorm:"-"`
+	RepoID    string    `xorm:"varchar(64) pk"`
+	IssueID   int       `xorm:"null"` // stored id of the main issue for checkstyle report
+	SecretKey string    `xorm:"varchar(32) null"`
+	Reports   []*Report `xorm:"-"`
 }
 
 // GetRepo returns the repository from the project ID.

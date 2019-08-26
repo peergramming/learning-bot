@@ -196,3 +196,8 @@ nav ul li a:focus {
   outline: 1px solid #024702;
 }
 
+.alert-red {
+  background-color: #f9a7b6;
+  outline: 1px solid #470214;
+}
+

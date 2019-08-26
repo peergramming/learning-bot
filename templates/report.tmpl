@@ -1,12 +1,13 @@
 {{template "base/head" .}}
 <div class="content">
+<p><a href="/{{.Project}}/reports/{{.SecretKey}}" class="btn">Show all reports</a></p>
 <h2>Report of <a href="{{.GitLabInst}}/{{.Project}}">{{.Project}}</a></h2>
 {{if .IsOldReport}}<div class="alert alert-red">
 <p><b>Notice:</b> This is a report based on an old version of your code!</p>
 </div>{{end}}
 <div class="meta">
-<p>Commit: <a href="{{.GitLabInst}}/{{.Project}}/commit/{{.Commit}}">{{.CommitShort}}</a></p>
-<p>Report generated: {{.ReportGenDate}}</p>
+<p>Commit: <a href="{{.GitLabInst}}/{{.Project}}/commit/{{.Commit}}">{{ShortenCommit .Commit}}</a></p>
+<p>Report generated: {{FormatDate .ReportGenDate}}</p>
 </div>
 {{if eq .Report.Status 0}}
 <p><b>Whoops!</b> Your report is currently being generated. Sit tight while I inspect your code!</p>

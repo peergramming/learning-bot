@@ -10,7 +10,9 @@ import (
 	"gitlab.com/gitedulab/learning-bot/modules/settings"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"os/exec"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -164,6 +166,14 @@ func createReport(git *gitlab.Client, project string, commit string) (report *mo
 	return report, err
 }
 
+func genSecretKey() (key string) {
+	rand.Seed(time.Now().UnixNano())
+	for i := 0; i < 12; i++ {
+		key += strconv.Itoa(rand.Intn(10))
+	}
+	return key
+}
+
 var checkRepoLimit = make(chan struct{}, 1)
 
 // checkRepositoriesCron checks active git repositories, cron job.
@@ -208,6 +218,7 @@ func checkRepositoriesCron() {
 				repo, err = models.GetRepo(path)
 				if err != nil && err.Error() == "Repository does not exist" {
 					repo.RepoID = path
+					repo.SecretKey = genSecretKey()
 					models.AddRepo(repo)
 				} else if err != nil {
 					log.Panicf("Failed to load repository: %s\n", err)

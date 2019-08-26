@@ -9,7 +9,6 @@ import (
 	macaron "gopkg.in/macaron.v1"
 	"log"
 	"strings"
-	"time"
 )
 
 // HomepageHandler handles the index page, which contains a description of the program.
@@ -36,6 +35,37 @@ func HelpCheckHandler(ctx *macaron.Context) {
 	ctx.Data["Example"] = desc.Example
 
 	ctx.HTML(200, "check_help")
+}
+
+// ReportsListPageHandler handles rendering list of reports.
+func ReportsListPageHandler(ctx *macaron.Context) {
+	ctxInit(ctx)
+
+	project := fmt.Sprintf("%s/%s", ctx.Params("namespace"),
+		ctx.Params("project"))
+	key := ctx.Params("key")
+
+	repo, err := models.GetRepo(project)
+
+	if err != nil && err.Error() == "Repository does not exist" {
+		ctx.Error(404, err.Error())
+		return
+	} else if err != nil {
+		// Some unknown error
+		ctx.Error(500, "Server error")
+		log.Printf("Failed to get report %s: %s", project, err)
+		return
+	}
+
+	if repo.SecretKey != key {
+		ctx.Error(403, "No permissions to view this page")
+		return
+	}
+
+	ctx.Data["Project"] = project
+	ctx.Data["Reports"] = repo.Reports
+
+	ctx.HTML(200, "reports")
 }
 
 // ReportPageHandler handles rendering a report page.
@@ -69,8 +99,9 @@ func ReportPageHandler(ctx *macaron.Context) {
 	ctx.Data["Project"] = project
 	ctx.Data["Commit"] = commit
 	ctx.Data["CommitShort"] = commit[:8]
-	ctx.Data["ReportGenDate"] = time.Unix(rep.CreatedUnix, 0).Format("Jan 2, 2006 at 3:04 PM")
+	ctx.Data["ReportGenDate"] = rep.CreatedUnix
 	ctx.Data["Report"] = rep
+	ctx.Data["SecretKey"] = repo.SecretKey
 
 	// Survey data
 	surveyConf := &settings.Config.Survey

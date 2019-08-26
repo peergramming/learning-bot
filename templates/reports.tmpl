@@ -1,0 +1,10 @@
+{{template "base/head" .}}
+<div class="content">
+<h2>List of reports for <a href="{{.GitLabInst}}/{{.Project}}">{{.Project}}</a></h2>
+<ul>
+{{range .Reports}}
+<li><a href="/{{$.Project}}/report/{{.Commit}}">Report for {{ShortenCommit .Commit}} &mdash; generated {{FormatDate .CreatedUnix}}</a></li>
+{{end}}
+</ul>
+</div>
+{{template "base/footer" .}}
