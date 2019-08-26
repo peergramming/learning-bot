@@ -2,8 +2,8 @@
 body {
   font-family: Roboto, sans-serif;
   font-size: 1em;
-  background-color: #e8e6e6;
   margin: 0;
+  background-color: #f4f4f4;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -22,7 +22,6 @@ p {
 }
 
 .content {
-  background-color: #ffffff;
   padding: 20px 30px;
 }
 
@@ -109,7 +108,6 @@ code {
 }
 
 .code-snippet {
-	background-color: #fff;
 	border-radius: 3px;
 	padding: 8px 4px;
 }
@@ -136,12 +134,7 @@ code {
 /* Navigation bar */
 nav {
   overflow: hidden;
-  background-color: #014c8f;
-  color: #fff;
-}
-
-.nav-grey {
-  background-color: #5e6a71;
+  border-bottom: 1px solid #000000;
 }
 
 nav ul {
@@ -158,6 +151,11 @@ nav ul li {
 
 .nav-right {
   float: right;
+  color: #424242;
+}
+
+.nav-title {
+  font-size: 1.2rem;
 }
 
 nav ul li a {
