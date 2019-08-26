@@ -26,6 +26,8 @@ var (
 	defaultDriver         = "sqlite"
 	defaultDBPath         = "./data.db"
 	defaultDBHost         = "localhost:3306"
+	defaultCertFile       = "server.crt"
+	defaultKeyFile        = "server.key"
 )
 
 func runConfig(clx *cli.Context) error {
@@ -44,6 +46,18 @@ func runConfig(clx *cli.Context) error {
 	fmt.Scanln(&instance)
 	if instance == "" {
 		instance = defaultInstance
+	}
+
+	fmt.Printf("Do you want to use TLS (HTTPS)? [n] ")
+	var respTLS string
+	fmt.Scanln(&respTLS)
+	tlsConfig := settings.TLSServerConfiguration{Enabled: false}
+	if strings.ToLower(respTLS) == "y" {
+		tlsConfig.Enabled = true
+		fmt.Printf("Enter the path of the certificate file: [%s] ", defaultCertFile)
+		tlsConfig.CertFile = scanWithDefault(defaultCertFile)
+		fmt.Printf("Enter the path of the key file: [%s] ", defaultKeyFile)
+		tlsConfig.KeyFile = scanWithDefault(defaultKeyFile)
 	}
 
 	fmt.Printf("Enter your bot site URL (incl. protocol and port): ")
@@ -118,7 +132,8 @@ func runConfig(clx *cli.Context) error {
 	}
 
 	// Generate struct configuration
-	config := settings.NewConfiguration(token, siteURL, instance, checkstylePath, dbConfig)
+	config := settings.NewConfiguration(token, siteURL, instance, checkstylePath, dbConfig,
+		tlsConfig)
 
 	// Write to file
 	var err error

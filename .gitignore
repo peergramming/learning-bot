@@ -7,3 +7,6 @@ config.toml
 active-projects.toml
 *.db
 *.jar
+
+*.key
+*.crt

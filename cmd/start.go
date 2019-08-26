@@ -66,7 +66,14 @@ func start(clx *cli.Context) (err error) {
 		})
 
 		log.Printf("Starting web server on port %s\n", settings.Config.SitePort)
-		log.Fatal(http.ListenAndServe(settings.Config.SitePort, m))
+		if settings.Config.TLSConfiguration.Enabled {
+			log.Println("Serving with TLS...")
+			log.Fatal(http.ListenAndServeTLS(settings.Config.SitePort,
+				settings.Config.TLSConfiguration.CertFile,
+				settings.Config.TLSConfiguration.KeyFile, m))
+		} else {
+			log.Fatal(http.ListenAndServe(settings.Config.SitePort, m))
+		}
 	}
 	return nil
 }

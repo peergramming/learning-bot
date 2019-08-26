@@ -40,9 +40,18 @@ type Configuration struct {
 	TimezoneName             string                   `toml:"timezone"`
 	Timezone                 *time.Location           `toml:"-"`
 	CodeSnippetIncludeLines  int                      `toml:"code_snippet_include_previous_lines"`
+	TLSConfiguration         TLSServerConfiguration   `toml:"tls_server_configuration"`
 	Limits                   LimitsConfiguration      `toml:"limits"`
 	GitLabCustomisation      GitLabIssueCustomisation `toml:"gitlab_issue"`
 	Survey                   SurveyConfiguration      `toml:"survey"`
+}
+
+// TLSServerConfiguration represents the server TLS
+// configuration to enable HTTPS.
+type TLSServerConfiguration struct {
+	Enabled  bool   `toml:"enabled"`
+	CertFile string `toml:"cert_file"`
+	KeyFile  string `toml:"key_file"`
 }
 
 // LimitsConfiguration represents limits for report items and concurrency.
@@ -94,7 +103,7 @@ type DBConfiguration struct {
 // NewConfiguration creates a new configuration struct with default
 // fields prefilled.
 func NewConfiguration(token string, siteURL string, instance string, checkstyleJar string,
-	databaseConfig DBConfiguration) Configuration {
+	databaseConfig DBConfiguration, tlsConfig TLSServerConfiguration) Configuration {
 	return Configuration{
 		SiteTitle:                "Learning Bot",
 		SiteURL:                  siteURL,
@@ -109,6 +118,7 @@ func NewConfiguration(token string, siteURL string, instance string, checkstyleJ
 		CheckActiveRepoCron:      "@every 1h45m",
 		TimezoneName:             "Europe/London",
 		CodeSnippetIncludeLines:  3,
+		TLSConfiguration:         tlsConfig,
 		Limits: LimitsConfiguration{
 			MaxCheckWorkers:          5,
 			MaxIssuesPerReport:       -1,
