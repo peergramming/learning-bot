@@ -61,6 +61,7 @@ func start(clx *cli.Context) (err error) {
 		m.Group("/:namespace/:project", func() {
 			m.Get("/report/:sha", routes.ReportPageHandler)
 			m.Get("/reports/:key", routes.ReportsListPageHandler)
+			m.Get("/data/:key.json", routes.RequestDataHandler)
 			m.Get("/status/:sha.json", routes.APIGetReportStatusHandler)
 		})
 

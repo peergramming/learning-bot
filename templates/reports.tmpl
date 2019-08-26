@@ -3,8 +3,11 @@
 <h2>List of reports for <a href="{{.GitLabInst}}/{{.Project}}">{{.Project}}</a></h2>
 <ul>
 {{range .Reports}}
-<li><a href="/{{$.Project}}/report/{{.Commit}}">Report for {{ShortenCommit .Commit}} &mdash; generated {{FormatDate .CreatedUnix}}</a></li>
+<li><a href="/{{$.Project}}/report/{{.Commit}}">Report for commit {{ShortenCommit .Commit}} &mdash; generated {{FormatDate .CreatedUnix}}</a></li>
 {{end}}
 </ul>
+<h2>Download data</h2>
+<p>You can download all your data as a JSON file. This file may be huge.</p>
+<p><a href="/{{.Project}}/data/{{.Key}}.json" class="btn">Request data</a></p>
 </div>
 {{template "base/footer" .}}
