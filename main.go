@@ -9,7 +9,7 @@ import (
 )
 
 // VERSION specifies the version of learning-bot
-var VERSION = "0.2.0"
+var VERSION = "0.3.0"
 
 func main() {
 	app := cli.NewApp()
