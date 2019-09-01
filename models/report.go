@@ -60,7 +60,7 @@ func UpdateReport(r *Report) (err error) {
 	if r == nil {
 		return errors.New("Report is nil")
 	}
-	_, err = engine.Update(r)
+	_, err = engine.Id(r.ReportID).Update(r)
 	return err
 }
 
