@@ -11,10 +11,9 @@ func TestAddGetRepo(t *testing.T) {
 	repo := &Repository{RepoID: "some/repo", IssueID: 5}
 	AddRepo(repo)
 	report := &Report{
-		RepositoryID:        repo.RepoID,
-		Commit:              "cd86dcf4737a47ae6a9909e43a9a01d7aee71fa0",
-		Status:              Complete,
-		RawCheckstyleOutput: "Some output",
+		RepositoryID: repo.RepoID,
+		Commit:       "cd86dcf4737a47ae6a9909e43a9a01d7aee71fa0",
+		Status:       Complete,
 	}
 	if HasReport(repo.RepoID, report.Commit) {
 		UpdateReport(report)
