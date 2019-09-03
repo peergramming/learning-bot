@@ -3,7 +3,7 @@
 All notable changes to the project will be listed here.
 All versions are tagged with git.  
 
-## [v0.2.1] - 1 Sep 2019
+## [v0.3.0] - 1 Sep 2019
 
 - Add back the support for Go 1.11.
 - Improve pages style and layout.

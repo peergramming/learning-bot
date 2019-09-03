@@ -17,7 +17,7 @@
 {{if .ShowSurvey}}<div class="alert alert-green">
 <p class="alert-title">{{.SurveyTitle}}</p>
 <p>{{.SurveyMessage}}</p>
-<a class="btn" href="{{.SurveyURL}}" target="_blank">Start survey</a></div>{{end}}
+<a class="btn" href="{{.SurveyURL}}" target="survey-lb">Start survey</a></div>{{end}}
 {{range .Report.Issues}}
 <div class="issue-card">
 <div class="file">
