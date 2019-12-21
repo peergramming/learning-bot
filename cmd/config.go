@@ -143,7 +143,7 @@ func runConfig(clx *cli.Context) error {
 		log.Fatal(err)
 	}
 
-	err = ioutil.WriteFile(settings.ConfigPath, buf.Bytes(), 0644)
+	err = ioutil.WriteFile(settings.ConfigPath, buf.Bytes(), 0600)
 	if err != nil {
 		log.Fatal(err)
 	}
