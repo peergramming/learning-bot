@@ -39,7 +39,7 @@ database functionality.
 
 ### Downloading
 ```
-$ git clone git@gitlab.com:gitedulab/learning-bot.git
+$ git clone https://github.com/peergramming/learning-bot.git
 $ cd learning-bot
 $ make clean all
 ```
@@ -116,10 +116,6 @@ is the documentation for `config.toml`.
   - `max_issues_per_report`: Maximum number of issues per report (-1 for no limit).
   - `max_issues_per_type_per_report`: Maximum number of issues per type in a report (-1 for no limit).
 
-
-## Development board
-
-Development can be tracked at our [Trello board](https://trello.com/b/tTjkyF73/learning-bot).
 
 
 [checkstyle]: https://checkstyle.org/

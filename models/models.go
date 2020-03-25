@@ -5,7 +5,7 @@ import (
 	_ "github.com/go-sql-driver/mysql" // MySQL driver support
 	"github.com/go-xorm/xorm"
 	_ "github.com/mattn/go-sqlite3" // SQLite driver support
-	"gitlab.com/gitedulab/learning-bot/modules/settings"
+	"github.com/peergramming/learning-bot/modules/settings"
 	"log"
 	"os"
 	"xorm.io/core"

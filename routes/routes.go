@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"gitlab.com/gitedulab/learning-bot/modules/settings"
+	"github.com/peergramming/learning-bot/modules/settings"
 	macaron "gopkg.in/macaron.v1"
 )
 

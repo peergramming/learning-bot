@@ -2,8 +2,8 @@ package checkstyle
 
 import (
 	"fmt"
-	"gitlab.com/gitedulab/learning-bot/models"
-	"gitlab.com/gitedulab/learning-bot/modules/settings"
+	"github.com/peergramming/learning-bot/models"
+	"github.com/peergramming/learning-bot/modules/settings"
 	"io/ioutil"
 	"log"
 	"regexp"

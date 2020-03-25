@@ -2,10 +2,10 @@ package routes
 
 import (
 	"fmt"
-	"gitlab.com/gitedulab/learning-bot/models"
-	"gitlab.com/gitedulab/learning-bot/modules/checkstyle"
-	"gitlab.com/gitedulab/learning-bot/modules/settings"
-	"gitlab.com/gitedulab/learning-bot/modules/utils"
+	"github.com/peergramming/learning-bot/models"
+	"github.com/peergramming/learning-bot/modules/checkstyle"
+	"github.com/peergramming/learning-bot/modules/settings"
+	"github.com/peergramming/learning-bot/modules/utils"
 	macaron "gopkg.in/macaron.v1"
 	"log"
 	"strings"

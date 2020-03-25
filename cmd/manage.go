@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/peergramming/learning-bot/modules/settings"
 	"github.com/urfave/cli"
-	"gitlab.com/gitedulab/learning-bot/modules/settings"
 	"os"
 	"strings"
 )

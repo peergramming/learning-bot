@@ -7,12 +7,12 @@ import (
 	"log"
 	"net/http"
 
-	"gitlab.com/gitedulab/learning-bot/models"
-	"gitlab.com/gitedulab/learning-bot/modules/checkstyle"
-	"gitlab.com/gitedulab/learning-bot/modules/cron"
-	"gitlab.com/gitedulab/learning-bot/modules/settings"
-	"gitlab.com/gitedulab/learning-bot/modules/utils"
-	"gitlab.com/gitedulab/learning-bot/routes"
+	"github.com/peergramming/learning-bot/models"
+	"github.com/peergramming/learning-bot/modules/checkstyle"
+	"github.com/peergramming/learning-bot/modules/cron"
+	"github.com/peergramming/learning-bot/modules/settings"
+	"github.com/peergramming/learning-bot/modules/utils"
+	"github.com/peergramming/learning-bot/routes"
 )
 
 // CmdStart represents a command-line command

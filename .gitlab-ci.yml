@@ -2,7 +2,7 @@
 image: golang:latest
 
 variables:
-  REPO_NAME: gitlab.com/gitedulab/learning-bot
+  REPO_NAME: github.com/peergramming/learning-bot
   BINARY: learning-bot
 
 before_script:

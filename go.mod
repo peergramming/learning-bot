@@ -1,4 +1,4 @@
-module gitlab.com/gitedulab/learning-bot
+module github.com/peergramming/learning-bot
 
 go 1.11
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gitlab.com/gitedulab/learning-bot/cmd"
+	"github.com/peergramming/learning-bot/cmd"
 	"log"
 	"os"
 
